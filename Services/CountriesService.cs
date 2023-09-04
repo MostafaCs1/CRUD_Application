@@ -50,7 +50,13 @@ namespace Services
 
         public List<CountryResponse> GetAllCountries()
         {
+            //return all country that exist in countries list as list of response type
             return _countries.Select(country => country.ToCountryResponse()).ToList();
+        }
+
+        public CountryResponse? GetCountryByCountryID(Guid? countryID)
+        {
+            throw new NotImplementedException();
         }
     }
 }
