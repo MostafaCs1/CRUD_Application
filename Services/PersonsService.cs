@@ -52,6 +52,11 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
+            return _persones.Select(person => person.ToPersonResponse()).ToList();
+        }
+
+        public PersonResponse? GetPersonByPersonID(Guid? personID)
+        {
             throw new NotImplementedException();
         }
     }

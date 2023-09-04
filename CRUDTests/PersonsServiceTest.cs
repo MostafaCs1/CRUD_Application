@@ -160,5 +160,56 @@ namespace CRUDTests
             }
         }
         #endregion
+
+
+        #region GetPersonByPersonID
+        // If you supply null person Id it should return null
+        [Fact]
+        public void GetPersonByPersonID_NullPersonID()
+        {
+            //Arrange
+            Guid? personID = null;
+
+            //Act
+            PersonResponse? response = _personsService.GetPersonByPersonID(personID);
+
+            //Assert
+            Assert.Null(response);
+        }
+
+        //If you supply invalid person id then it should return null
+        [Fact]
+        public void GetPersonByPersonID_InvalidPersonID()
+        {
+            //Arrange
+            Guid personID = Guid.NewGuid();
+
+            //Act
+            PersonResponse? response = _personsService.GetPersonByPersonID(personID);
+
+            //Assert
+            Assert.Null(response );
+        }
+
+
+        //If you supply valid person Id then it should return correct person response
+        [Fact]
+        public void GetPersonByPersonID_ValidPersonID()
+        {
+            //Arrange
+            List<PersonAddRequest> persones_list = CreateSomePersons();
+            PersonAddRequest person_add_request = persones_list[0];
+
+            //Act
+            PersonResponse person_response_from_add = _personsService.AddPerson(person_add_request);
+            PersonResponse? person_response_from_get = _personsService.GetPersonByPersonID(person_response_from_add.PersonID);
+
+            //Assert
+            Assert.Equal(person_response_from_add, person_response_from_get);
+        }
+
+        #endregion
+
+
     }
 }
