@@ -74,9 +74,11 @@ namespace CRUDTests
 
             //Act
             CountryResponse countryResponse = _countriesService.AddCountry(request);
+            List<CountryResponse> countries = _countriesService.GetAllCountries();
 
             //Assert
             Assert.True(countryResponse.CountryID != Guid.Empty);
+            Assert.Contains(countryResponse, countries);
         }
 
         #endregion
@@ -123,8 +125,6 @@ namespace CRUDTests
             }
         }
         #endregion
-
-
 
     }
 }

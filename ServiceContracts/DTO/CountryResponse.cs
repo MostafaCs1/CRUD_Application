@@ -11,6 +11,28 @@ namespace ServiceContracts.DTO
         public Guid? CountryID { get; set; }
         public string? CountryName { get; set; }
 
+
+        //check that both object are same then it return true, otherwise return false
+        public override bool Equals(object? obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (obj.GetType() != typeof(CountryResponse))
+            {
+                return false;
+            }
+
+            CountryResponse response = (CountryResponse) obj;
+            return this.CountryID == response.CountryID && this.CountryName == response.CountryName;
+        }
+
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public static class CountryExtention
