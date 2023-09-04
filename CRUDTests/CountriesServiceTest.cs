@@ -81,6 +81,50 @@ namespace CRUDTests
 
         #endregion
 
+        #region GetAllCountries
+        //County list should be empty before we add county
+        [Fact]
+        public void GetAllCountries_EmptyList()
+        {
+            //Act
+            List<CountryResponse> actual_country_list = _countriesService.GetAllCountries();
+
+            //Assert
+            Assert.Empty(actual_country_list);
+        }
+
+        //When we add some coutry to county list it should return their in the list
+        [Fact]
+        public void GetAllCountries_AddSomeCountry()
+        {
+            //Arrange
+            List<CountryAddRequest> country_add_request_list = new List<CountryAddRequest>
+            {
+                new CountryAddRequest { CountryName = "Iran" },
+                new CountryAddRequest { CountryName = "USA" },
+                new CountryAddRequest { CountryName = "India" }
+            };
+
+            List<CountryResponse> expected_country_response = new List<CountryResponse>();
+
+            //Act
+            foreach(CountryAddRequest request in country_add_request_list)
+            {
+                CountryResponse countryResponse = _countriesService.AddCountry(request);
+                expected_country_response.Add(countryResponse);
+            }
+
+            List<CountryResponse> actual_country_response = _countriesService.GetAllCountries();
+
+            //Assert
+            foreach(CountryResponse countryResponse in expected_country_response)
+            {
+                Assert.Contains(countryResponse, actual_country_response);
+            }
+        }
+        #endregion
+
+
 
     }
 }

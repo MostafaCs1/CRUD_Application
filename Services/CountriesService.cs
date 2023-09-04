@@ -47,5 +47,10 @@ namespace Services
 
             return newCountry.ToCountryResponse();
         }
+
+        public List<CountryResponse> GetAllCountries()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
