@@ -16,7 +16,7 @@ namespace ServiceContracts.DTO
         public string? Gender { get; set; }
         public Guid? CountryID { get; set; }
         public string? Address { get; set; }
-        public bool ReciveNewsLetters { get; set; }
+        public bool ReceiveNewsLetters { get; set; }
 
         /// <summary>
         /// Compare current object with param object
@@ -32,7 +32,7 @@ namespace ServiceContracts.DTO
                 return false;
 
             PersonResponse response = (PersonResponse)obj;
-            bool isEqual = this.PersonID == response.PersonID && this.PersonName == response.PersonName && this.Email == response.Email && this.DateOfBirth == response.DateOfBirth && this.Gender == response.Gender && this.CountryID == response.CountryID && this.Address == response.Address && this.ReciveNewsLetters == response.ReciveNewsLetters;
+            bool isEqual = this.PersonID == response.PersonID && this.PersonName == response.PersonName && this.Email == response.Email && this.DateOfBirth == response.DateOfBirth && this.Gender == response.Gender && this.CountryID == response.CountryID && this.Address == response.Address && this.ReceiveNewsLetters == response.ReceiveNewsLetters;
 
             return isEqual;
         }
@@ -61,7 +61,7 @@ namespace ServiceContracts.DTO
                 Gender = person.Gender,
                 CountryID = person.CountryID,
                 Address = person.Address,
-                ReciveNewsLetters = person.ReciveNewsLetters,
+                ReceiveNewsLetters = person.ReceiveNewsLetters,
                 Age = (person.DateOfBirth != null) ? Math.Round((DateTime.Now - person.DateOfBirth.Value).TotalDays / 365.25) : null
             };
         }
