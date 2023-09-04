@@ -122,5 +122,43 @@ namespace CRUDTests
         }
 
         #endregion
+
+
+        #region GetAllPersons
+        //persons list by default is empty
+        [Fact]
+        public void GetAllPersons_EmptyList()
+        {
+            //Act
+            List<PersonResponse> persons = _personsService.GetAllPersons();
+
+            //Assert
+            Assert.Empty(persons);
+        }
+
+        //when we supply some person into list of persons it should return them
+        [Fact]
+        public void GetAllPersons_AddSomePerson()
+        {
+            //Arrange
+            List<PersonAddRequest> persons_add_request = CreateSomePersons();
+            List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
+            List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
+
+            //Act
+            foreach(PersonAddRequest request in persons_add_request)
+            {
+                PersonResponse response = _personsService.AddPerson(request);
+                persons_response_from_add.Add(response);
+            }
+            persons_response_from_get = _personsService.GetAllPersons();
+
+            //Assert
+            foreach(PersonResponse response in persons_response_from_add)
+            {
+                Assert.Contains(response, persons_response_from_get);
+            }
+        }
+        #endregion
     }
 }
