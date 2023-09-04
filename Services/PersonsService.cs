@@ -57,7 +57,17 @@ namespace Services
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
         {
-            throw new NotImplementedException();
+            //validation: personId can't be null
+            if (personID == null)
+                return null;
+
+            Person? response = _persones.FirstOrDefault(person => person.PersonID == personID);
+
+            //validation" personId can't be invalid
+            if (response == null)
+                return null;
+
+            return response.ToPersonResponse();
         }
     }
 }
