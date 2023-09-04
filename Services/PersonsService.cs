@@ -3,6 +3,7 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using Entities;
 using System.ComponentModel.DataAnnotations;
+using Services.Helper;
 
 namespace Services
 {
@@ -19,14 +20,22 @@ namespace Services
 
         //services
         public PersonResponse AddPerson(PersonAddRequest? request)
-        {
-            // validation : PersonsAddrequest can't be null
+        {            
+            // PersonsAddrequest can't be null
             if(request == null) 
                 throw new ArgumentNullException(nameof(request));
 
-            // validation : Persons name can't be null
-            if(request.PersonName == null)
-                throw new ArgumentException(nameof(request.PersonName));
+            // Model validation
+            ValidationHelper.ModelValidation(request);
+
+            //Model validation
+            ValidationContext validationContext = new ValidationContext(request);
+            List<ValidationResult> validationResults = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(request, validationContext, validationResults);
+            if (!isValid)
+            {
+                throw new ArgumentException(validationResults.FirstOrDefault()?.ErrorMessage);
+            }
 
             //generate personId
             Guid personID = Guid.NewGuid();
