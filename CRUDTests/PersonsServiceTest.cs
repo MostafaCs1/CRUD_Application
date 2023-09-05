@@ -350,6 +350,84 @@ namespace CRUDTests
 
         #endregion
 
+        #region UpdatePerson
+        //When we supply null as PersonUpdateRequest, it should throw ArgumentNullException
+        [Fact]
+        public void UpdatePerson()
+        {
+            //Arrange
+            PersonUpdateRequest? updateRequest = null;
 
+            //Asert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                //Act
+                _personsService.UpdatePerson(updateRequest);
+            });
+        }
+
+        //When we supply invalid person id, it should throw ArgumentException
+        [Fact]
+        public void UpdatePerson_InvalidPersonID()
+        {
+            //Arrange
+            PersonUpdateRequest updateRequest = new PersonUpdateRequest()
+            {
+                PersonID = Guid.NewGuid(),
+                PersonName = "Farzin",
+                Email = "Example@email.com",
+                Gender = GenderOptions.Male
+            };
+
+            //Assert
+            Assert.Throws<ArgumentException>(() =>
+            {
+                //Act
+                _personsService.UpdatePerson(updateRequest);
+            });
+        }
+
+        //When PersonName is null, it should throw ArgumentException
+        [Fact]
+        public void UpdatePerson_NullPersonName()
+        {
+            //Arrange
+            List<PersonAddRequest> person_requests_list = CreateSomePersons();
+            PersonAddRequest request = person_requests_list.First();
+
+            //Act
+            PersonResponse response_from_add = _personsService.AddPerson(request);
+            PersonUpdateRequest personUpdateRequest = response_from_add.ToPersonUpdateRequest();
+            personUpdateRequest.PersonName = null;
+
+            //Assert
+            Assert.Throws<ArgumentException>(() =>
+            {
+                _personsService.UpdatePerson(personUpdateRequest);
+            });
+        }
+
+        //First, add a new person and try to update the person name and email
+        [Fact]
+        public void UpdatePerson_ValidUpdateRequest()
+        {
+            //Arrange
+            List<PersonAddRequest> person_requests_list = CreateSomePersons();
+            PersonAddRequest request = person_requests_list.First();
+
+            //Act
+            PersonResponse response_from_add = _personsService.AddPerson(request);
+            PersonUpdateRequest person_update_from_add = response_from_add.ToPersonUpdateRequest();
+            person_update_from_add.PersonName = "Ali";
+            person_update_from_add.Email = "sample@smaple.co";
+
+            PersonResponse person_reponse_from_update = _personsService.UpdatePerson(person_update_from_add);
+            PersonResponse? person_reponse_from_get = _personsService.GetPersonByPersonID(person_reponse_from_update.PersonID);
+
+            //Assert
+            Assert.Equal(person_reponse_from_update, person_reponse_from_get);
+        }
+
+        #endregion
     }
 }

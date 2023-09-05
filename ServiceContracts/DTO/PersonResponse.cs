@@ -1,5 +1,7 @@
 ﻿using Entities;
 using System;
+using ServiceContracts.Enums;
+
 
 namespace ServiceContracts.DTO
 {
@@ -47,6 +49,26 @@ namespace ServiceContracts.DTO
         {
             string outputStraing = string.Format(PersonID + " " + PersonName + " " + Email + " " + DateOfBirth + " " + Gender + " " + CountryID);
             return outputStraing;
+        }
+
+        /// <summary>
+        /// Change Person Response object to Person Update request type
+        /// </summary>
+        /// <param name="person">The PersonResponse object to convert</param>
+        /// <returns>Returns the converted PersonUpdateRequest object</returns>
+        public PersonUpdateRequest ToPersonUpdateRequest()
+        {
+            return new PersonUpdateRequest
+            {
+                PersonID = PersonID,
+                PersonName = PersonName,
+                Email = Email,
+                DateOfBirth = DateOfBirth,
+                CountryID = CountryID,
+                Address = Address,
+                ReceiveNewsLetters = ReceiveNewsLetters,
+                Gender = Gender!=null ? (GenderOptions)Enum.Parse(typeof(GenderOptions), Gender, true) : null
+            };
         }
     }
 

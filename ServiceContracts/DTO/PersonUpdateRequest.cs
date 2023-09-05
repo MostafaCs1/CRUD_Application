@@ -21,8 +21,6 @@ namespace ServiceContracts.DTO
         [EmailAddress(ErrorMessage = "Email address isn't valid.")]
         public string? Email { get; set; }
         public DateTime? DateOfBirth { get; set; }
-
-        [Required(ErrorMessage = "Person gender can't be empty choose one.")]
         public GenderOptions? Gender { get; set; }
         public Guid? CountryID { get; set; }
         public string? Address { get; set; }
