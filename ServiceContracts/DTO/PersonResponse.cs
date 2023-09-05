@@ -15,6 +15,7 @@ namespace ServiceContracts.DTO
         public double? Age { get; set; }
         public string? Gender { get; set; }
         public Guid? CountryID { get; set; }
+        public string? Country {  get; set; }
         public string? Address { get; set; }
         public bool ReceiveNewsLetters { get; set; }
 
@@ -40,6 +41,12 @@ namespace ServiceContracts.DTO
         public override int GetHashCode()
         {
             throw new NotImplementedException();
+        }
+
+        public override string ToString()
+        {
+            string outputStraing = string.Format(PersonID + " " + PersonName + " " + Email + " " + DateOfBirth + " " + Gender + " " + CountryID);
+            return outputStraing;
         }
     }
 

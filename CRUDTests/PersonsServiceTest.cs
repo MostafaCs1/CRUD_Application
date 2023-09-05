@@ -3,6 +3,7 @@ using Services;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
+using Xunit.Abstractions;
 
 
 namespace CRUDTests
@@ -12,12 +13,14 @@ namespace CRUDTests
         //Private fields
         private readonly IPersonsService _personsService;
         private readonly ICountriesService _countriesService;
+        private readonly ITestOutputHelper _outputHelper;
 
         //Constructor
-        public PersonsServiceTest()
+        public PersonsServiceTest(ITestOutputHelper outputHelper)
         {
             _personsService = new PersonsService();
             _countriesService = new CountriesService();
+            _outputHelper = outputHelper;
         }
 
         //Methods
@@ -151,10 +154,22 @@ namespace CRUDTests
                 PersonResponse response = _personsService.AddPerson(request);
                 persons_response_from_add.Add(response);
             }
+
+            _outputHelper.WriteLine("Expected persons :");
+            foreach(PersonResponse personResponse in persons_response_from_add)
+            {
+                _outputHelper.WriteLine(personResponse.ToString());
+            }
+
             persons_response_from_get = _personsService.GetAllPersons();
+            _outputHelper.WriteLine("Actual persons :");
+            foreach (PersonResponse personResponse in persons_response_from_get)
+            {
+                _outputHelper.WriteLine(personResponse.ToString());
+            }
 
             //Assert
-            foreach(PersonResponse response in persons_response_from_add)
+            foreach (PersonResponse response in persons_response_from_add)
             {
                 Assert.Contains(response, persons_response_from_get);
             }
@@ -210,6 +225,84 @@ namespace CRUDTests
 
         #endregion
 
+
+        #region GetFiltredPersons
+        //If the search text is empty and search by is "PersonName", it should return all persons
+        [Fact]
+        public void GetFiltredPerson_EmptySearchStraing()
+        {
+            //Arrange
+            List<PersonAddRequest> persons_add_request_list = CreateSomePersons();
+            List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
+            List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
+
+            //Act
+            foreach(PersonAddRequest request in persons_add_request_list)
+            {
+                persons_response_from_add.Add(_personsService.AddPerson(request));
+            }
+
+            _outputHelper.WriteLine("Expected responses :");
+            foreach(PersonResponse response in  persons_response_from_add)
+            {
+                _outputHelper.WriteLine(response.ToString());
+            }
+
+            persons_response_from_get = _personsService.GetFiltredPersons(nameof(PersonResponse.PersonName), "");
+            _outputHelper.WriteLine("Actual responses :");
+            foreach (PersonResponse response in persons_response_from_add)
+            {
+                _outputHelper.WriteLine(response.ToString());
+            }
+
+            //Assert
+            foreach(PersonResponse personResponse in persons_response_from_add)
+            {
+                Assert.Contains(personResponse, persons_response_from_get);
+            }
+        }
+
+        //First we will add few persons; and then we will search based on person name with some search string. It should return the matching persons
+        [Fact]
+        public void GetFiltredPerson_SearchByPersonName()
+        {
+            //Arrange
+            List<PersonAddRequest> persons_add_request_list = CreateSomePersons();
+            List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
+            List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
+
+            //Act
+            foreach (PersonAddRequest request in persons_add_request_list)
+            {
+                persons_response_from_add.Add(_personsService.AddPerson(request));
+            }
+
+            _outputHelper.WriteLine("Added responses :");
+            foreach (PersonResponse response in persons_response_from_add)
+            {
+                _outputHelper.WriteLine(response.ToString());
+            }
+
+            persons_response_from_get = _personsService.GetFiltredPersons(nameof(PersonResponse.PersonName), "ma");
+            _outputHelper.WriteLine("Geted responses :");
+            foreach (PersonResponse response in persons_response_from_get)
+            {
+                _outputHelper.WriteLine(response.ToString());
+            }
+
+            //Assert
+            foreach (PersonResponse personResponse in persons_response_from_add)
+            {
+                if(personResponse.PersonName != null)
+                {
+                    if(personResponse.PersonName.Contains("ma", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Assert.Contains(personResponse, persons_response_from_get);
+                    }
+                }
+            }
+        }
+        #endregion
 
     }
 }

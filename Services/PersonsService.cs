@@ -2,7 +2,6 @@
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Entities;
-using System.ComponentModel.DataAnnotations;
 using Services.Helper;
 
 namespace Services
@@ -11,31 +10,32 @@ namespace Services
     {
         //fields
         private List<Person> _persones;
+        private readonly ICountriesService _countryService;
 
         //constructor
         public PersonsService()
         {
             _persones = new List<Person>();
+            _countryService = new CountriesService();
+        }
+
+        //methods
+        private PersonResponse ConvetrPersonToPersonResponse(Person person)
+        {
+            PersonResponse response = person.ToPersonResponse();
+            response.Country = _countryService.GetCountryByCountryID(person.CountryID)?.CountryName;
+            return response;
         }
 
         //services
         public PersonResponse AddPerson(PersonAddRequest? request)
-        {            
+        {
             // PersonsAddrequest can't be null
-            if(request == null) 
+            if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
             // Model validation
             ValidationHelper.ModelValidation(request);
-
-            //Model validation
-            ValidationContext validationContext = new ValidationContext(request);
-            List<ValidationResult> validationResults = new List<ValidationResult>();
-            bool isValid = Validator.TryValidateObject(request, validationContext, validationResults);
-            if (!isValid)
-            {
-                throw new ArgumentException(validationResults.FirstOrDefault()?.ErrorMessage);
-            }
 
             //generate personId
             Guid personID = Guid.NewGuid();
@@ -47,12 +47,12 @@ namespace Services
             //add person to person list
             _persones.Add(newPerson);
 
-            return newPerson.ToPersonResponse();
+            return ConvetrPersonToPersonResponse(newPerson);
         }
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _persones.Select(person => person.ToPersonResponse()).ToList();
+            return _persones.Select(person => ConvetrPersonToPersonResponse(person)).ToList();
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
@@ -68,6 +68,11 @@ namespace Services
                 return null;
 
             return response.ToPersonResponse();
+        }
+
+        public List<PersonResponse> GetFiltredPersons(string searchBy, string? searchString)
+        {
+            throw new NotImplementedException();
         }
     }
 }
