@@ -167,7 +167,28 @@ namespace Services
 
         public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdate)
         {
-            throw new NotImplementedException();
+            //Update request can't be null
+            if(personUpdate == null) 
+                throw new ArgumentNullException(nameof(personUpdate));
+
+            //Model validation
+            ValidationHelper.ModelValidation(personUpdate);
+
+            Person? matchingPerson = _persones.FirstOrDefault(temp => temp.PersonID == personUpdate.PersonID);
+            //PersonID should be a valid person Id
+            if (matchingPerson == null)
+                throw new ArgumentException("Given person Id isn't exist in persons list.");
+
+            //update person details
+            matchingPerson.PersonName = personUpdate.PersonName;
+            matchingPerson.Email = personUpdate.Email;
+            matchingPerson.Address = personUpdate.Address;
+            matchingPerson.Gender = personUpdate.Gender.ToString();
+            matchingPerson.ReceiveNewsLetters = personUpdate.ReceiveNewsLetters;
+            matchingPerson.DateOfBirth = personUpdate.DateOfBirth;
+            matchingPerson.CountryID = personUpdate.CountryID;
+
+            return matchingPerson.ToPersonResponse();
         }
     }
 }

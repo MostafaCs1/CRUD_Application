@@ -350,10 +350,11 @@ namespace CRUDTests
 
         #endregion
 
+
         #region UpdatePerson
         //When we supply null as PersonUpdateRequest, it should throw ArgumentNullException
         [Fact]
-        public void UpdatePerson()
+        public void UpdatePerson_NullPersonUpdateRequest()
         {
             //Arrange
             PersonUpdateRequest? updateRequest = null;
