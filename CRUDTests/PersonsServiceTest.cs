@@ -75,6 +75,7 @@ namespace CRUDTests
 
         }
 
+        //Test services
         #region AddPerson
         //If you supply null value it should return argument null exception
         [Fact]
@@ -303,6 +304,52 @@ namespace CRUDTests
             }
         }
         #endregion
+
+
+        #region GetSortedPersons
+        //When we sort based on PersonName in DESC, it should return persons list in descending on PersonName
+        [Fact]
+        public void GetSortedPersons_DESCOrder()
+        {
+            //Arrange
+            List<PersonAddRequest> persons_add_request_list = CreateSomePersons();
+            List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
+            List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
+            List<PersonResponse> persons_response_from_filter = new List<PersonResponse>();
+
+            //Act
+            foreach(PersonAddRequest person in persons_add_request_list)
+            {
+                persons_response_from_add.Add(_personsService.AddPerson(person));
+            }
+
+            List<PersonResponse> allPersons = _personsService.GetAllPersons();
+            persons_response_from_filter = allPersons.OrderByDescending(temp => temp.PersonName).ToList();
+
+            // print expected values
+            _outputHelper.WriteLine("expected values: ");
+            foreach(PersonResponse response in persons_response_from_filter)
+            {
+                _outputHelper.WriteLine(response.ToString());
+            }
+
+            persons_response_from_get = _personsService.GetSortedPersons(allPersons, nameof(PersonResponse.PersonName), SortOrderOptions.DESC);
+            // print actual values
+            _outputHelper.WriteLine("actual values: ");
+            foreach (PersonResponse response in persons_response_from_get)
+            {
+                _outputHelper.WriteLine(response.ToString());
+            }
+
+            //Assert
+            for(int i = 0; i < allPersons.Count; i++)
+            {
+                Assert.Equal(persons_response_from_filter[i], persons_response_from_get[i]);
+            }
+        }
+
+        #endregion
+
 
     }
 }
