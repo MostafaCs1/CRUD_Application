@@ -37,8 +37,8 @@
                 <th scope="col">#</th>
 
                 @await Html.PartialAsync("_GridcolumnHeader", new ViewDataDictionary(ViewData){
-                    {"ColumnName", nameof(PersonResponse.PersonName)},
-                    {"DisplayName", "Person Name"}})
+                {"ColumnName", nameof(PersonResponse.PersonName)},
+                {"DisplayName", "Person Name"}})
 
                 @await Html.PartialAsync("_GridcolumnHeader", new ViewDataDictionary(ViewData){
                 {"ColumnName", nameof(PersonResponse.Email)},
@@ -86,8 +86,12 @@
                     <td>@person.ReceiveNewsLetters</td>
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a class="btn btn-outline-primary me-1 rounded">Edit</a>
-                            <a class="btn btn-outline-danger rounded">Delete</a>
+                            <a class="btn btn-outline-warning me-1 rounded" asp-controller="Person" asp-action="Edit" asp-route-personID="@person.PersonID" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
+                                <i class="bi-pencil-fill"></i>
+                            </a>
+                            <a class="btn btn-outline-danger rounded" asp-controller="Person" asp-action="Edit" asp-route-personID="@person.PersonID" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                                <i class="bi-trash-fill"></i>
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -96,3 +100,9 @@
         </tbody>
     </table>
 </div>
+@section scripts{
+    <script>
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+}

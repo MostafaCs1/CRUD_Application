@@ -70,5 +70,34 @@ namespace CRUD_Application.Controllers
             _personService.AddPerson(request);
             return RedirectToAction("Index", "Person");
         }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult Edit(Guid personID)
+        {
+            PersonResponse? matchingPerson = _personService.GetPersonByPersonID(personID);
+            if(matchingPerson == null)
+            {
+                return RedirectToAction("Index", "Person");
+            }
+            ViewData["countries"] = _countryService.GetAllCountries();
+            PersonUpdateRequest personUpdateRequest = matchingPerson.ToPersonUpdateRequest();
+            return View(personUpdateRequest);
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult Edit(PersonUpdateRequest updateRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewData["errors"] = ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage).ToList();
+                ViewData["countries"] = _countryService.GetAllCountries();
+
+                return View();
+            }
+            _personService.UpdatePerson(updateRequest);
+            return RedirectToAction("Index", "Person");
+        }
     }
 }

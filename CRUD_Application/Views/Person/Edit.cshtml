@@ -1,16 +1,18 @@
-﻿@model PersonAddRequest
+﻿@model PersonUpdateRequest
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Edit";
 }
 
 <div class="container">
-    <h2 class="h3 text-center p-2 pb-0">Create new person</h2>
+    <h2 class="h3 text-center p-2 pb-0">Edit person</h2>
     <div>
         <a asp-controller="Person" asp-action="Index" class="btn text-danger pt-0 border-0"><i class="bi-arrow-left"></i> Back to persons list</a>
     </div>
     <hr class="border border-1 border-secondary m-0">
-    <form asp-controller="Person" asp-action="Create" method="post">
+    <form asp-controller="Person" asp-action="Edit" method="post">
         <div class="row mt-3">
+            @* Person ID *@
+            <input asp-for = "PersonID" class="d-none"/>
             @* Person Name *@
             <div class="col">
                 <label asp-for="PersonName" class="form-label">Person Name</label>
@@ -74,22 +76,9 @@
         </div>
         <div class="row mt-3">
             <div class="d-grid gap-2 col-10 col-sm-6 col-md-4 mx-auto">
-                <button type="submit" class="btn btn-success">Create</button>
+                <button type="submit" class="btn btn-warning">Update</button>
             </div>
         </div>
-
-        @* server side validation *@
-@*         @if (ViewBag.errors != null)
-        {
-            <div class="row mt-2 col-6 ">
-                <ul class="alert alert-danger list-unstyled ms-2" role="alert">
-                    @foreach (string error in ViewBag.errors)
-                    {
-                        <li>@error</li>
-                    }
-                </ul>
-            </div>
-        } *@
 
     </form>
 </div>
