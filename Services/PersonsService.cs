@@ -10,7 +10,7 @@ namespace Services
     public class PersonsService : IPersonsService
     {
         //fields
-        private List<Person> _persons;
+        private readonly List<Person> _persons;
         private readonly ICountriesService _countryService;
 
         //constructor

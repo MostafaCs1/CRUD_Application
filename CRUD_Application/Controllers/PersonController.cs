@@ -19,7 +19,6 @@ namespace CRUD_Application.Controllers
             _countryService = countriesService;
         }
 
-
         //actions
 
         [HttpGet]
@@ -46,6 +45,32 @@ namespace CRUD_Application.Controllers
             List<PersonResponse> sortedPersons = _personService.GetSortedPersons(persons, sortBy, sortOrder);
             
             return View(sortedPersons);
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult Create()
+        {
+            ViewData["countries"] = _countryService.GetAllCountries();
+            ViewData["errors"] = null;
+
+            return View();
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult Create(PersonAddRequest request)
+        {
+            if(!ModelState.IsValid)
+            {
+                ViewData["errors"] =  ModelState.Values.SelectMany(value => value.Errors).Select( error => error.ErrorMessage).ToList();
+                ViewData["countries"] = _countryService.GetAllCountries();
+
+                return View();
+            }
+            ViewData["errors"] = null;
+            _personService.AddPerson(request);
+            return RedirectToAction("Index", "Person");
         }
     }
 }

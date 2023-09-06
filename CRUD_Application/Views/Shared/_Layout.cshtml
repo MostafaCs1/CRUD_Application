@@ -14,17 +14,17 @@
 <body>
     <nav class="navbar navbar-expand bg-dark sticky-top">
         <div class="container">
-            <a href="#" class="navbar-brand d-none d-sm-inline">
+            <a asp-controller="Person" asp-action="Index" class="navbar-brand d-none d-sm-inline">
                 <img src="~/img/logo.png" style="width:70px" alt="CRUD Application">
             </a>
             <ul class="navbar-nav w-100 d-flex justify-content-center">
                 <li class="nav-item rounded me-2">
-                    <a class="nav-link fw-medium text-white" href="#">
+                    <a class="nav-link fw-medium text-white" asp-controller="Person" asp-action="Index">
                         <i class="bi-person-fill mx-1"></i>Persons
                     </a>
                 </li>
                 <li class="nav-item rounded">
-                    <a class="nav-link fw-medium text-white" href="#">
+                    <a class="nav-link fw-medium text-white" asp-controller="Person" asp-action="Create">
                         <i class="bi-plus mx-1"></i>Create Person
                     </a>
                 </li>

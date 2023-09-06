@@ -5,8 +5,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 //add services
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IPersonsService, PersonsService>();
-builder.Services.AddScoped<ICountriesService, CountriesService>();
+builder.Services.AddSingleton<IPersonsService, PersonsService>();
+builder.Services.AddSingleton<ICountriesService, CountriesService>();
 
 //Build App
 var app = builder.Build();
