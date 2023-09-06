@@ -11,14 +11,20 @@ namespace ServiceContracts.DTO
     /// </summary>
     public class PersonAddRequest
     {
-        [Required(ErrorMessage = "Person name can't be empty.")]
+        [Required(ErrorMessage = "Person name can't be blanck.")]
         public string? PersonName { get; set; }
 
-        [Required(ErrorMessage = "Email field can't be empty or null.")]
+        [Required(ErrorMessage = "Email field can't be blank.")]
         [EmailAddress(ErrorMessage = "Email address isn't valid.")]
+        [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
+
+        [DataType(DataType.Date)]
+        [Required(ErrorMessage = "Date of birth field can't be empty.")]
         public DateTime? DateOfBirth { get; set; }
         public GenderOptions? Gender { get; set; }
+
+        [Required(ErrorMessage = "Please selecet a country.")]
         public Guid? CountryID { get; set; }
         public string? Address { get; set; }
         public bool ReceiveNewsLetters { get; set; }

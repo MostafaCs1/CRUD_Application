@@ -52,7 +52,6 @@ namespace CRUD_Application.Controllers
         public IActionResult Create()
         {
             ViewData["countries"] = _countryService.GetAllCountries();
-            ViewData["errors"] = null;
 
             return View();
         }
@@ -68,7 +67,6 @@ namespace CRUD_Application.Controllers
 
                 return View();
             }
-            ViewData["errors"] = null;
             _personService.AddPerson(request);
             return RedirectToAction("Index", "Person");
         }

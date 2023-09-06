@@ -6,7 +6,7 @@
 <div class="container">
     <h2 class="h3 text-center p-2 pb-0">Create new person</h2>
     <div>
-        <a asp-controller="Person" asp-action="Index" class="btn text-danger pt-0"><i class="bi-arrow-left"></i> Back to persons list</a>
+        <a asp-controller="Person" asp-action="Index" class="btn text-danger pt-0 border-0"><i class="bi-arrow-left"></i> Back to persons list</a>
     </div>
     <hr class="border border-1 border-secondary m-0">
     <form asp-controller="Person" asp-action="Create" method="post">
@@ -15,12 +15,14 @@
             <div class="col">
                 <label asp-for="PersonName" class="form-label">Person Name</label>
                 <input asp-for="PersonName" placeholder="person name ..." class="form-control">
+                <span asp-validation-for="PersonName" class="text-danger"></span>
             </div>
 
             @* Person Email *@
             <div class="col">
                 <label asp-for="Email" class="form-label">Email</label>
                 <input asp-for="Email" placeholder="example@email.com" class="form-control">
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
         </div>
         <div class="row mt-3">
@@ -28,6 +30,7 @@
             <div class="col">
                 <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
                 <input asp-for="DateOfBirth" class="form-control" type="date">
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
             </div>
 
             @* Country *@
@@ -40,6 +43,7 @@
                         <option value=@country.CountryID>@country.CountryName</option>
                     }
                 </select>
+                <span asp-validation-for="CountryID" class="text-danger"></span>
             </div>
 
             @* Person Gender  *@
@@ -73,7 +77,9 @@
                 <button type="submit" class="btn btn-success">Create</button>
             </div>
         </div>
-        @if (ViewBag.errors != null)
+
+        @* server side validation *@
+@*         @if (ViewBag.errors != null)
         {
             <div class="row mt-2 col-6 ">
                 <ul class="alert alert-danger list-unstyled ms-2" role="alert">
@@ -83,7 +89,15 @@
                     }
                 </ul>
             </div>
-        }
+        } *@
 
     </form>
 </div>
+
+@section scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.4/jquery.validate.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+}
