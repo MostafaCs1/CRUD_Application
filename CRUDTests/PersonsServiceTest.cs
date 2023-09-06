@@ -430,5 +430,55 @@ namespace CRUDTests
         }
 
         #endregion
+
+
+        #region DeletePerson
+        //If you supply null as PersonID, it should throw ArgumentNullException
+        [Fact]
+        public void DeletePerson_NullPersonID()
+        {
+            //Act
+            Guid? personID = null;
+
+            //Assert
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                //Act
+                _personsService.DeletePerson(personID);
+            });
+        }
+
+        //If you supply an invalid PersonID, it should return false
+        [Fact]
+        public void DeletePerson_InvalidPersonID()
+        {
+            //Arrange
+            Guid personID = Guid.NewGuid();
+
+            //Act
+            bool isDeleted = _personsService.DeletePerson(personID);
+
+            //Assert
+            Assert.False(isDeleted);
+        }
+
+
+        //If you supply an valid PersonID, it should return true
+        [Fact]
+        public void DeletePerson_ValidPersonID()
+        {
+            //Arrange
+            List<PersonAddRequest> persons = CreateSomePersons();
+            PersonAddRequest personAddRequest = persons.First();
+
+            //Act
+            PersonResponse personResponse = _personsService.AddPerson(personAddRequest);
+            bool isDeleted = _personsService.DeletePerson(personResponse.PersonID);
+
+            //Assert
+            Assert.True(isDeleted);
+        }
+
+        #endregion
     }
 }
