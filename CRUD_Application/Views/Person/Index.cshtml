@@ -1,10 +1,13 @@
-﻿@{
+﻿@model IEnumerable<PersonResponse>
+
+@{
     ViewData["Title"] = "Home";
+    int counter = 1;
 }
 
 <h1 class="h3 text-center p-2">Persons list</h1>
 <hr class="border border-1 border-secondary m-0">
-<div class="bg-body-secondary border border-secondary rounded my-3 p-3 w-90 m-auto shadow">
+<div class="bg-body-secondary border border-secondary rounded my-3 p-3 container m-auto shadow">
     <form action="#" class="d-flex justify-content-around flex-md-row flex-column">
         <select name="" id="" class="form-select d-md-inline w-auto flex-grow-1">
             <option value=" " selected disabled>Search By</option>
@@ -38,91 +41,27 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>Farzin</td>
-                <td>sample@example.com</td>
-                <td>2000-09-04</td>
-                <td>23</td>
-                <td>Male</td>
-                <td>Iran</td>
-                <td>2584 tehran</td>
-                <td>true</td>
-                <td>
-                    <div class="btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary me-1 rounded">Edit</a>
-                        <a class="btn btn-outline-danger rounded">Delete</a>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">1</th>
-                <td>Farzin</td>
-                <td>sample@example.com</td>
-                <td>2000-09-04</td>
-                <td>23</td>
-                <td>Male</td>
-                <td>Iran</td>
-                <td>2584 tehran</td>
-                <td>true</td>
-                <td>
-                    <div class="btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary me-1 rounded">Edit</a>
-                        <a class="btn btn-outline-danger rounded">Delete</a>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">1</th>
-                <td>Farzin</td>
-                <td>sample@example.com</td>
-                <td>2000-09-04</td>
-                <td>23</td>
-                <td>Male</td>
-                <td>Iran</td>
-                <td>2584 tehran</td>
-                <td>true</td>
-                <td>
-                    <div class="btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary me-1 rounded">Edit</a>
-                        <a class="btn btn-outline-danger rounded">Delete</a>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">1</th>
-                <td>Farzin</td>
-                <td>sample@example.com</td>
-                <td>2000-09-04</td>
-                <td>23</td>
-                <td>Male</td>
-                <td>Iran</td>
-                <td>2584 tehran</td>
-                <td>true</td>
-                <td>
-                    <div class="btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary me-1 rounded">Edit</a>
-                        <a class="btn btn-outline-danger rounded">Delete</a>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">1</th>
-                <td>Farzin</td>
-                <td>sample@example.com</td>
-                <td>2000-09-04</td>
-                <td>23</td>
-                <td>Male</td>
-                <td>Iran</td>
-                <td>2584 tehran</td>
-                <td>true</td>
-                <td>
-                    <div class="btn-group btn-group-sm">
-                        <a class="btn btn-outline-primary me-1 rounded">Edit</a>
-                        <a class="btn btn-outline-danger rounded">Delete</a>
-                    </div>
-                </td>
-            </tr>
+            @foreach (PersonResponse person in Model)
+            {
+                <tr>
+                    <th scope="row">@counter</th>
+                    <td>@person.PersonName</td>
+                    <td>@person.Email</td>
+                    <td>@person.DateOfBirth?.ToString("dd MMM yyyy")</td>
+                    <td>@person.Age</td>
+                    <td>@person.Gender</td>
+                    <td>@person.Country</td>
+                    <td>@person.Address</td>
+                    <td>@person.ReceiveNewsLetters</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a class="btn btn-outline-primary me-1 rounded">Edit</a>
+                            <a class="btn btn-outline-danger rounded">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                counter++;
+            }
         </tbody>
     </table>
 </div>
