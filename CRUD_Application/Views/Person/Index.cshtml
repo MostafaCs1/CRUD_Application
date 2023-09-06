@@ -8,18 +8,25 @@
 <h1 class="h3 text-center p-2">Persons list</h1>
 <hr class="border border-1 border-secondary m-0">
 <div class="bg-body-secondary border border-secondary rounded my-3 p-3 container m-auto shadow">
-    <form action="#" class="d-flex justify-content-around flex-md-row flex-column">
-        <select name="" id="" class="form-select d-md-inline w-auto flex-grow-1">
+    <form asp-controller="Persons" asp-action="Index" method="get" class="d-flex justify-content-around flex-md-row flex-column">
+        <select name="searchBy" class="form-select d-md-inline w-auto flex-grow-1">
             <option value=" " selected disabled>Search By</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+            @foreach(KeyValuePair<string, string> search in ViewBag.searchList)
+            {
+                @if(search.Value == ViewBag.searchBy)
+                {
+                    <option value="@search.Value" selected>@search.Key</option>
+                }
+                else
+                {
+                    <option value="@search.Value">@search.Key</option>
+                }
+            }
         </select>
-        <input type="text" class="form-control d-md-inline w-auto flex-grow-1 mx-md-3" placeholder="search ...">
+        <input type="text" class="form-control d-md-inline w-auto flex-grow-1 mx-md-3" placeholder="search ..." name="searchString" value="@ViewBag.searchstring">
         <div class="btn-group">
-            <a href="#" class="btn btn-primary me-1 rounded">Sreach</a>
-            <a href="#" class="btn text-danger border-0 rounded">clear all</a>
+            <button type="submit" class="btn btn-primary me-1 rounded">Sreach</button>
+            <a asp-controller="Person" asp-action="Index" class="btn text-danger border-0 rounded">clear all</a>
         </div>
     </form>
 </div>

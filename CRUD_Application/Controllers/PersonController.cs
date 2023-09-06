@@ -21,11 +21,25 @@ namespace CRUD_Application.Controllers
 
         //actions
 
+        [HttpGet]
         [Route("/")]
         [Route("[action]")]
-        public IActionResult Index()
+        public IActionResult Index(string searchBy, string? searchString)
         {
-            List<PersonResponse> persons = _personService.GetAllPersons();
+            ViewData["searchList"] = new Dictionary<string, string>()
+            {
+                {"Person Name", nameof(PersonResponse.PersonName) },
+                {"Email", nameof(PersonResponse.Email) },
+                {"Date of Birth", nameof(PersonResponse.DateOfBirth) },
+                {"Address", nameof(PersonResponse.Address) },
+                {"Gender", nameof(PersonResponse.Gender) },
+                {"Country", nameof(PersonResponse.CountryID)},
+            };
+
+            ViewBag.searchBy = searchBy;
+            ViewBag.searchString = searchString;
+            
+            List<PersonResponse> persons = _personService.GetFiltredPersons(searchBy, searchString);
             
             return View(persons);
         }

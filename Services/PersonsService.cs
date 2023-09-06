@@ -115,6 +115,11 @@ namespace Services
                         ? person.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase) : true).ToList();
                     break;
 
+                case nameof(PersonResponse.Age):
+                    matchingPersons = allPersons.Where(person => (person.Age != null)
+                        ? person.Age.Equals(searchString) : true).ToList();
+                    break;
+
                 case nameof(PersonResponse.Address):
                     matchingPersons = allPersons.Where(person => (!string.IsNullOrEmpty(person.Address))
                         ? person.Address.Contains(searchString, StringComparison.OrdinalIgnoreCase) : true).ToList();
