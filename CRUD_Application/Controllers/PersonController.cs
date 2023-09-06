@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Entities;
+using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -97,6 +98,37 @@ namespace CRUD_Application.Controllers
                 return View();
             }
             _personService.UpdatePerson(updateRequest);
+            return RedirectToAction("Index", "Person");
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public IActionResult Delete(Guid? personID)
+        {
+            PersonResponse? personObject = _personService.GetPersonByPersonID(personID);
+            if (personObject == null)
+                return RedirectToAction("Index", "Person");
+            
+            return View(personObject);
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        public IActionResult Delete(PersonResponse response)
+        {
+            PersonResponse? personObject = _personService.GetPersonByPersonID(response.PersonID);
+            if(personObject == null)
+            {
+                return RedirectToAction("Index", "Person");
+            }
+
+            //check that person is deleted or not
+            bool isDeleted = _personService.DeletePerson(personObject.PersonID);
+            if(!isDeleted)
+            {
+                return View(personObject);
+            }
+
             return RedirectToAction("Index", "Person");
         }
 
