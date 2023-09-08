@@ -13,7 +13,8 @@ builder.Services.AddSingleton<ICountriesService, CountriesService>();
 //add database service
 builder.Services.AddDbContext<PersonDbContext>(options =>
 {
-    options.UseSqlServer();
+    //connect into sql server
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefualtConnection"));
 });
 
 //Build App
