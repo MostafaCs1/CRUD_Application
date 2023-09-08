@@ -13,9 +13,26 @@ namespace Entities
         {
             base.OnModelCreating(modelBuilder);
 
-            //rename tebles
+            //map models into tables
             modelBuilder.Entity<Country>().ToTable("Countries");
             modelBuilder.Entity<Person>().ToTable("Persons");
+
+            //seed countries
+            string countriesJson = System.IO.File.ReadAllText("countries.json");
+            List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(countriesJson);
+            foreach(Country country in countries)
+            {
+                modelBuilder.Entity<Country>().HasData(country);
+            }
+
+            //seed persons
+            string personsJson = System.IO.File.ReadAllText("persons.json");
+            List<Person> persons = System.Text.Json.JsonSerializer.Deserialize<List<Person>>(personsJson);
+            foreach(Person prson in persons)
+            {
+                modelBuilder.Entity<Person>().HasData(prson);
+            }
+
         }
 
     }
