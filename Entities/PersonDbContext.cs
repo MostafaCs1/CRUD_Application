@@ -6,7 +6,7 @@ namespace Entities
     public class PersonDbContext : DbContext
     {
         //constractor
-        public PersonDbContext(DbContextOptions options):base(options) { }
+        public PersonDbContext(DbContextOptions options) : base(options) { }
 
         //define tables
         public DbSet<Person> Persons { get; set; }
@@ -23,7 +23,7 @@ namespace Entities
             //seed countries
             string countriesJson = System.IO.File.ReadAllText("countries.json");
             List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(countriesJson);
-            foreach(Country country in countries)
+            foreach (Country country in countries)
             {
                 modelBuilder.Entity<Country>().HasData(country);
             }
@@ -31,7 +31,7 @@ namespace Entities
             //seed persons
             string personsJson = System.IO.File.ReadAllText("persons.json");
             List<Person> persons = System.Text.Json.JsonSerializer.Deserialize<List<Person>>(personsJson);
-            foreach(Person prson in persons)
+            foreach (Person prson in persons)
             {
                 modelBuilder.Entity<Person>().HasData(prson);
             }

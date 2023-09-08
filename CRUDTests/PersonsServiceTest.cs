@@ -16,10 +16,10 @@ namespace CRUDTests
         private readonly ITestOutputHelper _outputHelper;
 
         //Constructor
-        public PersonsServiceTest(ITestOutputHelper outputHelper)
+        public PersonsServiceTest(ITestOutputHelper outputHelper, IPersonsService personsService, ICountriesService countriesService)
         {
-            _personsService = new PersonsService(false);
-            _countriesService = new CountriesService(false);
+            _personsService = personsService;
+            _countriesService = countriesService;
             _outputHelper = outputHelper;
         }
 

@@ -28,5 +28,7 @@ namespace Entities
         //bit type
         public bool ReceiveNewsLetters { get; set; }
 
+        public string? TIN { get; set; }
+
     }
 }
