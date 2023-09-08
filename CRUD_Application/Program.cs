@@ -1,5 +1,7 @@
 using ServiceContracts;
 using Services;
+using Entities;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IPersonsService, PersonsService>();
 builder.Services.AddSingleton<ICountriesService, CountriesService>();
+
+//add database service
+builder.Services.AddDbContext<PersonDbContext>(options =>
+{
+    options.UseSqlServer();
+});
 
 //Build App
 var app = builder.Build();
