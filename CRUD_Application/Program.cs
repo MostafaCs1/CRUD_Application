@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 //add services
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<IPersonsService, PersonsService>();
-builder.Services.AddSingleton<ICountriesService, CountriesService>();
+builder.Services.AddScoped<IPersonsService, PersonsService>();
+builder.Services.AddScoped<ICountriesService, CountriesService>();
 
 //add database service
 builder.Services.AddDbContext<PersonDbContext>(options =>
