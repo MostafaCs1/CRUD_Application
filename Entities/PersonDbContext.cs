@@ -5,6 +5,9 @@ namespace Entities
 {
     public class PersonDbContext : DbContext
     {
+        //constractor
+        public PersonDbContext(DbContextOptions options):base(options) { }
+
         //define tables
         public DbSet<Person> Persons { get; set; }
         public DbSet<Country> Countries { get; set; }
