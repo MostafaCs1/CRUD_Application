@@ -36,6 +36,17 @@ namespace Entities
                 modelBuilder.Entity<Person>().HasData(prson);
             }
 
+            //fluent API
+            //modelBuilder.Entity<Person>().HasIndex(person => person.TIN).IsUnique();
+
+            //change TIN column name and type
+            modelBuilder.Entity<Person>().Property(temp => temp.TIN)
+                .HasColumnName("TaxIdentificationNumber")
+                .HasColumnType("varchar(8)")
+                .HasDefaultValue("ABC12345");
+
+            //add Constraint into TIN column
+            modelBuilder.Entity<Person>().HasCheckConstraint("CHK_TIN", "len([TaxIdentificationNumber]) = 8");
         }
 
     }
