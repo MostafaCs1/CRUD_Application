@@ -1,5 +1,6 @@
 ﻿using ServiceContracts;
 using ServiceContracts.DTO;
+using Microsoft.EntityFrameworkCore;
 using Entities;
 
 namespace Services
@@ -16,7 +17,7 @@ namespace Services
         }
 
         //Services
-        public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
+        public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
         {
             //validation : country add request can't be null
             if (countryAddRequest == null)
@@ -31,7 +32,7 @@ namespace Services
             }
 
             //validation : country name can't be duplicate
-            if (_db.Countries.Any(country => country.CountryName == countryAddRequest.CountryName))
+            if (await _db.Countries.AnyAsync(country => country.CountryName == countryAddRequest.CountryName))
             {
                 throw new ArgumentException("Given country name is already exist.");
             }
@@ -44,23 +45,23 @@ namespace Services
 
             //add country to country list
             _db.Countries.Add(newCountry);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return newCountry.ToCountryResponse();
         }
 
-        public List<CountryResponse> GetAllCountries()
+        public async Task<List<CountryResponse>> GetAllCountries()
         {
             //return all country that exist in countries list as list of response type
-            return _db.Countries.Select(country => country.ToCountryResponse()).ToList();
+            return await _db.Countries.Select(country => country.ToCountryResponse()).ToListAsync();
         }
 
-        public CountryResponse? GetCountryByCountryID(Guid? countryID)
+        public async Task<CountryResponse?> GetCountryByCountryID(Guid? countryID)
         {
             if (countryID == null)
                 return null;
 
-            Country? country = _db.Countries.FirstOrDefault(temp => temp.CountryID == countryID);
+            Country? country = await _db.Countries.FirstOrDefaultAsync(temp => temp.CountryID == countryID);
 
             if (country == null)
                 return null;
