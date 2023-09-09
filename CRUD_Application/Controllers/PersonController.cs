@@ -144,5 +144,13 @@ namespace CRUD_Application.Controllers
             };
         }
 
+        [Route("PersonsCSV")]
+        public async Task<IActionResult> PersonsCSV()
+        {
+            MemoryStream personsCsv = await _personService.GetPersonsCSV();
+
+            return File(personsCsv, "Application/octet-stream", "Persons.csv");
+        }
+
     }
 }
