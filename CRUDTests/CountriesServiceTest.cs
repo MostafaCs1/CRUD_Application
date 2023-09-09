@@ -3,6 +3,8 @@ using System.Linq;
 using ServiceContracts.DTO;
 using Services;
 using ServiceContracts;
+using Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRUDTests
 {
@@ -10,9 +12,9 @@ namespace CRUDTests
     {
         private readonly ICountriesService _countriesService;
 
-        public CountriesServiceTest(ICountriesService countriesService)
+        public CountriesServiceTest()
         {
-            _countriesService = countriesService;
+            _countriesService = new CountriesService(new PersonDbContext(new DbContextOptionsBuilder<PersonDbContext>().Options));
         }
 
         #region AddCountry

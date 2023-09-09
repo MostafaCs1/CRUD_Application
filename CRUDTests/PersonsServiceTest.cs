@@ -4,22 +4,24 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Xunit.Abstractions;
-
+using Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRUDTests
 {
     public class PersonsServiceTest
     {
         //Private fields
+        private readonly ITestOutputHelper _outputHelper;
         private readonly IPersonsService _personsService;
         private readonly ICountriesService _countriesService;
-        private readonly ITestOutputHelper _outputHelper;
 
         //Constructor
-        public PersonsServiceTest(ITestOutputHelper outputHelper, IPersonsService personsService, ICountriesService countriesService)
+        public PersonsServiceTest(ITestOutputHelper outputHelper)
         {
-            _personsService = personsService;
-            _countriesService = countriesService;
+            _countriesService = new CountriesService(new PersonDbContext(new DbContextOptionsBuilder<PersonDbContext>().Options));
+            _personsService = new PersonsService(new PersonDbContext(new DbContextOptionsBuilder<PersonDbContext>().Options), _countriesService);
+            
             _outputHelper = outputHelper;
         }
 
