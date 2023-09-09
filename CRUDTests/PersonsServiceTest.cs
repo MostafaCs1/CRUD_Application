@@ -113,7 +113,7 @@ namespace CRUDTests
         public async Task AddPerson_PropPerson()
         {
             //Arrange
-            List<PersonAddRequest> personAddRequest_list = CreateSomePersons();
+            List<PersonAddRequest> personAddRequest_list = await CreateSomePersons();
             PersonAddRequest request = personAddRequest_list.First();
 
             //Act
@@ -142,10 +142,10 @@ namespace CRUDTests
 
         //when we supply some person into list of persons it should return them
         [Fact]
-        public async void GetAllPersons_AddSomePerson()
+        public async Task GetAllPersons_AddSomePerson()
         {
             //Arrange
-            List<PersonAddRequest> persons_add_request = CreateSomePersons();
+            List<PersonAddRequest> persons_add_request = await CreateSomePersons();
             List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
             List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
 

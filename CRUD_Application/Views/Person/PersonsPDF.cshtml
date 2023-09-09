@@ -1,0 +1,45 @@
+﻿@model IEnumerable<PersonResponse>
+@{
+    Layout = null;
+    int counter = 1;
+}
+<link href="@("http://" + Context.Request.Host.ToString() + "/css/bootstrap-reboot.min.css")" rel="stylesheet"/>
+<link href="@("http://" + Context.Request.Host.ToString() + "/css/bootstrap.min.css")" rel="stylesheet" />
+
+<h1 class="h3 text-center p-2">Persons list</h1>
+<hr class="border border-1 border-secondary m-0">
+
+<div class="table-responsive-md">
+    <table class="table table-bordered">
+        <thead>
+            <tr class="table-success">
+                <th scope="col">#</th>
+                <td>Person Name</td>
+                <td>Email</td>
+                <td>Date of Birth</td>
+                <td>Age</td>
+                <td>Gender</td>
+                <td>country</td>
+                <td>Address</td>
+                <td>Receive News Letters</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (PersonResponse person in Model)
+            {
+                <tr>
+                    <th scope="row">@counter</th>
+                    <td>@person.PersonName</td>
+                    <td>@person.Email</td>
+                    <td>@person.DateOfBirth?.ToString("dd MMM yyyy")</td>
+                    <td>@person.Age</td>
+                    <td>@person.Gender</td>
+                    <td>@person.Country</td>
+                    <td>@person.Address</td>
+                    <td>@person.ReceiveNewsLetters</td>
+                </tr>
+                counter++;
+            }
+        </tbody>
+    </table>
+</div>

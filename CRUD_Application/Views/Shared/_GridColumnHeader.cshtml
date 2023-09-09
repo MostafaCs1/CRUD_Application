@@ -6,7 +6,7 @@
             <input type="text" name="searchString" value=@ViewBag.searchString class="d-none" />
             <input type="text" name="sortBy" value=@ViewBag.ColumnName class="d-none" />
             <input type="text" name="sortOrder" value=@nameof(SortOrderOptions.ASC) class="d-none" />
-            <button class="btn border-0 fw-medium text-primary p-0">@ViewBag.DisplayName <i class="bi-caret-up-fill"></i></button>
+            <button class="btn border-0 fw-medium text-primary p-0">@ViewBag.DisplayName <i class="bi bi-caret-up-fill"></i></button>
         </form>
     </th>
 }
@@ -18,7 +18,7 @@ else if (ViewBag.CurrentSortBy == ViewBag.ColumnName && ViewBag.CurrentSortOrder
             <input type="text" name="searchString" value=@ViewBag.searchString class="d-none" />
             <input type="text" name="sortBy" value=@ViewBag.ColumnName class="d-none" />
             <input type="text" name="sortOrder" value=@nameof(SortOrderOptions.DESC) class="d-none" />
-            <button class="btn border-0 fw-medium text-primary p-0">@ViewBag.DisplayName <i class="bi-caret-down-fill"></i></button>
+            <button class="btn border-0 fw-medium text-primary p-0">@ViewBag.DisplayName <i class="bi bi-caret-down-fill"></i></button>
         </form>
     </th>
 }
