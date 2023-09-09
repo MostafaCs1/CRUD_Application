@@ -4,6 +4,7 @@ using ServiceContracts.DTO;
 using Entities;
 using Services.Helper;
 using ServiceContracts.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services
 {
@@ -20,13 +21,6 @@ namespace Services
             _countryService = countriesService;
         }
 
-        //methods
-        private PersonResponse ConvetrPersonToPersonResponse(Person person)
-        {
-            PersonResponse response = person.ToPersonResponse();
-            response.Country = _countryService.GetCountryByCountryID(person.CountryID)?.CountryName;
-            return response;
-        }
 
         //services
         public PersonResponse AddPerson(PersonAddRequest? request)
@@ -49,12 +43,13 @@ namespace Services
             _db.Persons.Add(newPerson);
             _db.SaveChanges();
 
-            return ConvetrPersonToPersonResponse(newPerson);
+            return newPerson.ToPersonResponse();
         }
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _db.Persons.ToList().Select(person => ConvetrPersonToPersonResponse(person)).ToList();
+            IEnumerable<Person> persons = _db.Persons.Include("Country").ToList();
+            return persons.Select(person => person.ToPersonResponse()).ToList();
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
@@ -63,7 +58,7 @@ namespace Services
             if (personID == null)
                 return null;
 
-            Person? response = _db.Persons.FirstOrDefault(person => person.PersonID == personID);
+            Person? response = _db.Persons.Include("Country").FirstOrDefault(person => person.PersonID == personID);
 
             //validation" personId can't be invalid
             if (response == null)
