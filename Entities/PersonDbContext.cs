@@ -53,7 +53,7 @@ namespace Entities
             {
                 entity.HasOne<Country>(p => p.Country)
                 .WithMany(c => c.Persons)
-                .HasForeignKey("countryID");
+                .HasForeignKey("CountryID");
             });
         }
 
