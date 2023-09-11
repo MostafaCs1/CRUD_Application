@@ -36,12 +36,8 @@
             @* Country *@
             <div class="col">
                 <label asp-for="CountryID" class="form-label">Country</label>
-                <select asp-for="CountryID" class="form-select">
+                <select asp-for="CountryID" asp-items="ViewBag.countries" class="form-select">
                     <option value=" " selected disabled>Select your country</option>
-                    @foreach (CountryResponse country in ViewBag.countries)
-                    {
-                        <option value=@country.CountryID>@country.CountryName</option>
-                    }
                 </select>
                 <span asp-validation-for="CountryID" class="text-danger"></span>
             </div>

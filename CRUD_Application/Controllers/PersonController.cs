@@ -4,6 +4,7 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Rotativa.AspNetCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CRUD_Application.Controllers
 {    
@@ -53,7 +54,8 @@ namespace CRUD_Application.Controllers
         [Route("[action]")]
         public async Task<IActionResult> Create()
         {
-            ViewData["countries"] = await _countryService.GetAllCountries();
+            List<CountryResponse> countries = await _countryService.GetAllCountries();
+            ViewData["countries"] = countries.Select(temp => new SelectListItem { Text = temp.CountryName, Value = temp.CountryID.ToString() });
 
             return View();
         }
@@ -64,8 +66,12 @@ namespace CRUD_Application.Controllers
         {
             if(!ModelState.IsValid)
             {
+                //get all errors
                 ViewData["errors"] =  ModelState.Values.SelectMany(value => value.Errors).Select( error => error.ErrorMessage).ToList();
-                ViewData["countries"] = _countryService.GetAllCountries();
+
+                //get countries list
+                List<CountryResponse> countries = await _countryService.GetAllCountries();
+                ViewData["countries"] = countries.Select(temp => new SelectListItem { Text = temp.CountryName, Value = temp.CountryID.ToString() });
 
                 return View();
             }
@@ -82,7 +88,10 @@ namespace CRUD_Application.Controllers
             {
                 return RedirectToAction("Index", "Person");
             }
-            ViewData["countries"] = await _countryService.GetAllCountries();
+            //get countries list
+            List<CountryResponse> countries = await _countryService.GetAllCountries();
+            ViewData["countries"] = countries.Select(temp => new SelectListItem { Text = temp.CountryName, Value = temp.CountryID.ToString() });
+
             PersonUpdateRequest personUpdateRequest = matchingPerson.ToPersonUpdateRequest();
             return View(personUpdateRequest);
         }
@@ -94,7 +103,10 @@ namespace CRUD_Application.Controllers
             if (!ModelState.IsValid)
             {
                 ViewData["errors"] = ModelState.Values.SelectMany(value => value.Errors).Select(error => error.ErrorMessage).ToList();
-                ViewData["countries"] = await _countryService.GetAllCountries();
+
+                //get countries list
+                List<CountryResponse> countries = await _countryService.GetAllCountries();
+                ViewData["countries"] = countries.Select(temp => new SelectListItem { Text = temp.CountryName, Value = temp.CountryID.ToString() });
 
                 return View();
             }
