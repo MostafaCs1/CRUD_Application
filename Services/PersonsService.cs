@@ -7,6 +7,7 @@ using ServiceContracts.Enums;
 using Microsoft.EntityFrameworkCore;
 using CsvHelper;
 using System.Globalization;
+using CsvHelper.Configuration;
 
 namespace Services
 {
@@ -171,7 +172,7 @@ namespace Services
         public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdate)
         {
             //Update request can't be null
-            if(personUpdate == null) 
+            if (personUpdate == null)
                 throw new ArgumentNullException(nameof(personUpdate));
 
             //Model validation
@@ -200,11 +201,11 @@ namespace Services
         public async Task<bool> DeletePerson(Guid? personID)
         {
             //PersonsID can't be null
-            if(personID == null)
+            if (personID == null)
                 throw new ArgumentNullException(nameof(personID));
 
             Person? person = await _db.Persons.FirstOrDefaultAsync(person => person.PersonID == personID);
-            if(person == null)
+            if (person == null)
                 return false;
 
             _db.Persons.Remove(person);
@@ -217,13 +218,41 @@ namespace Services
         {
             MemoryStream memoryStream = new MemoryStream();
             StreamWriter streamWriter = new StreamWriter(memoryStream);
-            CsvWriter csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture, leaveOpen: true);
 
-            csvWriter.WriteHeader<PersonResponse>();
+            CsvConfiguration csvConfiguration = new CsvConfiguration(cultureInfo: CultureInfo.InvariantCulture);
+            CsvWriter csvWriter = new CsvWriter(streamWriter, csvConfiguration);
+
+            //PersonName,Email,DateOfBirth,Age,Gender,Country,Address,ReceiveNewsLetters
+            csvWriter.WriteField<string>(nameof(PersonResponse.PersonName));
+            csvWriter.WriteField<string>(nameof(PersonResponse.Email));
+            csvWriter.WriteField<string>(nameof(PersonResponse.DateOfBirth));
+            csvWriter.WriteField<string>(nameof(PersonResponse.Age));
+            csvWriter.WriteField<string>(nameof(PersonResponse.Gender));
+            csvWriter.WriteField<string>(nameof(PersonResponse.Country));
+            csvWriter.WriteField<string>(nameof(PersonResponse.Address));
+            csvWriter.WriteField<string>(nameof(PersonResponse.ReceiveNewsLetters));
             csvWriter.NextRecord();
+            csvWriter.Flush();
 
-            List<PersonResponse> persons = await GetAllPersons();
-            await csvWriter.WriteRecordsAsync(persons);
+            //get all persons list
+            List<PersonResponse> persons = await _db.Persons.Include("Country").Select(person => person.ToPersonResponse()).ToListAsync();
+
+            foreach (PersonResponse person in persons)
+            {
+                csvWriter.WriteField(person.PersonName);
+                csvWriter.WriteField(person.Email);
+                if (person.DateOfBirth != null)
+                    csvWriter.WriteField(person.DateOfBirth.Value.ToString("yyyy/MM/dd"));
+                else
+                    csvWriter.WriteField(" ");
+                csvWriter.WriteField(person.Age);
+                csvWriter.WriteField(person.Gender);
+                csvWriter.WriteField(person.Country);
+                csvWriter.WriteField(person.Address);
+                csvWriter.WriteField(person.ReceiveNewsLetters);
+                csvWriter.NextRecord();
+                csvWriter.Flush();
+            }
 
             memoryStream.Position = 0;
             return memoryStream;
