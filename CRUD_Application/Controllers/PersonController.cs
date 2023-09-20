@@ -164,5 +164,13 @@ namespace CRUD_Application.Controllers
             return File(personsCsv, "Application/octet-stream", "Persons.csv");
         }
 
+        [Route("PersonsExcel")]
+        public async Task<IActionResult> PersonsExcel()
+        {
+            MemoryStream personsExcel = await _personService.GetPersonExcel();
+
+            return File(personsExcel, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Persons.xlsx");
+        }
+
     }
 }

@@ -60,7 +60,13 @@ namespace ServiceContracts
         /// <summary>
         /// Returns persons as CSV
         /// </summary>
-        /// <returns>Returns the memory stream with CSV data</returns>
+        /// <returns>Returns the memory stream with CSV data file</returns>
         Task<MemoryStream> GetPersonsCSV();
+
+        /// <summary>
+        /// Return persons as Excel file
+        /// </summary>
+        /// <returns>Return the memory stream with Excel data file</returns>
+        Task<MemoryStream> GetPersonExcel();
     }
 }
