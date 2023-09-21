@@ -5,9 +5,10 @@
 }
 
 <h1 class="h3 text-center pt-2">Persons list</h1>
-<a asp-controller="Person" asp-action="PersonsPDF" class="btn border-0 text-info"><i class="bi bi-file-earmark-arrow-down"></i> Download as PDF</a>
-<a asp-controller="Person" asp-action="PersonsCSV" class="btn border-0 text-info"><i class="bi bi-file-earmark-arrow-down"></i> Download as CSV</a>
-<a asp-controller="Person" asp-action="PersonsExcel" class="btn border-0 text-info"><i class="bi bi-file-earmark-arrow-down"></i> Download as Excel</a>
+<span class="text-black fw-bold">Download as :</span>
+<a asp-controller="Person" asp-action="PersonsPDF" class="btn border-0 text-primary"><u>PDF</u></a>
+<a asp-controller="Person" asp-action="PersonsCSV" class="btn border-0 text-primary"><u>CSV</u></a>
+<a asp-controller="Person" asp-action="PersonsExcel" class="btn border-0 text-primary"><u>Excel</u></a>
 
 <hr class="border border-1 border-secondary m-0">
 <div class="bg-body-secondary border border-secondary rounded my-3 p-3 container m-auto shadow">
