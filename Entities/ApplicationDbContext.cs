@@ -1,16 +1,15 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Entities
 {
-    public class PersonDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
         //constractor
-        public PersonDbContext(DbContextOptions options) : base(options) { }
+        public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         //define tables
-        public DbSet<Person> Persons { get; set; }
-        public DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Person> Persons { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

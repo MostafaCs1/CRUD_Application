@@ -12,7 +12,7 @@ builder.Services.AddScoped<IPersonsService, PersonsService>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 
 //add database service
-builder.Services.AddDbContext<PersonDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     //connect into sql server
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

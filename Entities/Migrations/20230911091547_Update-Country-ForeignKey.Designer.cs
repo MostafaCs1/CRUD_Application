@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Entities.Migrations
 {
-    [DbContext(typeof(PersonDbContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230911091547_Update-Country-ForeignKey")]
     partial class UpdateCountryForeignKey
     {
