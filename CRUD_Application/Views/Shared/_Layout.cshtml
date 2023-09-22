@@ -14,25 +14,30 @@
 <body>
     <nav class="navbar navbar-expand bg-dark sticky-top">
         <div class="container">
-            <a asp-controller="Person" asp-action="Index" class="navbar-brand d-none d-sm-inline">
+            <a asp-controller="Persons" asp-action="Index" class="navbar-brand d-none d-sm-inline">
                 <img src="~/img/logo.png" asp-append-version="true" style="width:70px" alt="CRUD Application">
             </a>
             <ul class="navbar-nav w-100 d-flex justify-content-center">
                 <li class="nav-item rounded me-2">
-                    <a class="nav-link fw-medium text-white" asp-controller="Person" asp-action="Index">
+                    <a class="nav-link fw-medium text-white" asp-controller="Persons" asp-action="Index">
                         <i class="bi bi-person-fill mx-1"></i>Persons
                     </a>
                 </li>
                 <li class="nav-item rounded">
-                    <a class="nav-link fw-medium text-white" asp-controller="Person" asp-action="Create">
+                    <a class="nav-link fw-medium text-white" asp-controller="Persons" asp-action="Create">
                         <i class="bi bi-plus mx-1"></i>Create Person
+                    </a>
+                </li>
+                <li class="nav-item rounded">
+                    <a class="nav-link fw-medium text-white" asp-controller="Countries" asp-action="UploadCountriesFromExcelFile">
+                        <i class="bi bi-filetype-xlsx mx-1"></i>Upload Countries
                     </a>
                 </li>
             </ul>
         </div>
     </nav>
 
-    <main class="container-fluid">
+    <main class="container-fluid min-vh-100">
         @RenderBody()
     </main>
 

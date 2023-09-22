@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace CRUD_Application.Controllers
 {    
     [Route("[controller]")]
-    public class PersonController : Controller
+    public class PersonsController : Controller
     {
         //private fields
         private readonly IPersonsService _personService;
         private readonly ICountriesService _countryService;
 
         //constructor
-        public PersonController(IPersonsService personsService, ICountriesService countriesService)
+        public PersonsController(IPersonsService personsService, ICountriesService countriesService)
         {
             _personService = personsService;
             _countryService = countriesService;
@@ -76,7 +76,7 @@ namespace CRUD_Application.Controllers
                 return View();
             }
             await _personService.AddPerson(request);
-            return RedirectToAction("Index", "Person");
+            return RedirectToAction("Index", "Persons");
         }
 
         [HttpGet]
@@ -111,7 +111,7 @@ namespace CRUD_Application.Controllers
                 return View();
             }
             await _personService.UpdatePerson(updateRequest);
-            return RedirectToAction("Index", "Person");
+            return RedirectToAction("Index", "Persons");
         }
 
         [HttpGet]
@@ -142,7 +142,7 @@ namespace CRUD_Application.Controllers
                 return View(personObject);
             }
 
-            return RedirectToAction("Index", "Person");
+            return RedirectToAction("Index", "Persons");
         }
 
         [Route("PersonsPDF")]

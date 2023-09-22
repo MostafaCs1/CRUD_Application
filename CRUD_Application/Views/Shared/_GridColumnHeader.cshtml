@@ -1,7 +1,7 @@
 ﻿@if (ViewBag.CurrentSortBy == ViewBag.ColumnName && ViewBag.CurrentSortOrder == SortOrderOptions.DESC)
 {
     <th>
-        <form asp-controller="Person" asp-action="Index" method="get">
+        <form asp-controller="Persons" asp-action="Index" method="get">
             <input type="text" name="searchBy" value=@ViewBag.searchBy class="d-none" />
             <input type="text" name="searchString" value=@ViewBag.searchString class="d-none" />
             <input type="text" name="sortBy" value=@ViewBag.ColumnName class="d-none" />
@@ -13,7 +13,7 @@
 else if (ViewBag.CurrentSortBy == ViewBag.ColumnName && ViewBag.CurrentSortOrder == SortOrderOptions.ASC)
 {
     <th>
-        <form asp-controller="Person" asp-action="Index" method="get">
+        <form asp-controller="Persons" asp-action="Index" method="get">
             <input type="text" name="searchBy" value=@ViewBag.searchBy class="d-none" />
             <input type="text" name="searchString" value=@ViewBag.searchString class="d-none" />
             <input type="text" name="sortBy" value=@ViewBag.ColumnName class="d-none" />
@@ -25,7 +25,7 @@ else if (ViewBag.CurrentSortBy == ViewBag.ColumnName && ViewBag.CurrentSortOrder
 else
 {
     <th>
-        <form asp-controller="Person" asp-action="Index" method="get">
+        <form asp-controller="Persons" asp-action="Index" method="get">
             <input type="text" name="searchBy" value=@ViewBag.searchBy class="d-none" />
             <input type="text" name="searchString" value=@ViewBag.searchString class="d-none" />
             <input type="text" name="sortBy" value=@ViewBag.ColumnName class="d-none" />

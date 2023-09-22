@@ -6,9 +6,9 @@
 
 <h1 class="h3 text-center pt-2">Persons list</h1>
 <span class="text-black fw-bold">Download as :</span>
-<a asp-controller="Person" asp-action="PersonsPDF" class="btn border-0 text-primary"><u>PDF</u></a>
-<a asp-controller="Person" asp-action="PersonsCSV" class="btn border-0 text-primary"><u>CSV</u></a>
-<a asp-controller="Person" asp-action="PersonsExcel" class="btn border-0 text-primary"><u>Excel</u></a>
+<a asp-controller="Persons" asp-action="PersonsPDF" class="btn border-0 text-primary"><u>PDF</u></a>
+<a asp-controller="Persons" asp-action="PersonsCSV" class="btn border-0 text-primary"><u>CSV</u></a>
+<a asp-controller="Persons" asp-action="PersonsExcel" class="btn border-0 text-primary"><u>Excel</u></a>
 
 <hr class="border border-1 border-secondary m-0">
 <div class="bg-body-secondary border border-secondary rounded my-3 p-3 container m-auto shadow">
@@ -30,7 +30,7 @@
         <input type="text" class="form-control d-md-inline w-auto flex-grow-1 mx-md-3" placeholder="search ..." name="searchString" value="@ViewBag.searchstring">
         <div class="btn-group">
             <button type="submit" class="btn btn-primary me-1 rounded">Sreach</button>
-            <a asp-controller="Person" asp-action="Index" class="btn text-danger border-0 rounded">clear all</a>
+            <a asp-controller="Persons" asp-action="Index" class="btn text-danger border-0 rounded">clear all</a>
         </div>
     </form>
 </div>
@@ -91,10 +91,10 @@
                     <td>@person.ReceiveNewsLetters</td>
                     <td>
                         <div class="btn-group btn-group-sm">
-                            <a class="btn btn-outline-warning me-1 rounded" asp-controller="Person" asp-action="Edit" asp-route-personID="@person.PersonID" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
+                            <a class="btn btn-outline-warning me-1 rounded" asp-controller="Persons" asp-action="Edit" asp-route-personID="@person.PersonID" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
                                 <i class="bi-pencil-fill"></i>
                             </a>
-                            <a class="btn btn-outline-danger rounded" asp-controller="Person" asp-action="Delete" asp-route-personID="@person.PersonID" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                            <a class="btn btn-outline-danger rounded" asp-controller="Persons" asp-action="Delete" asp-route-personID="@person.PersonID" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
                                 <i class="bi-trash-fill"></i>
                             </a>
                         </div>
