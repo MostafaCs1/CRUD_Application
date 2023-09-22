@@ -82,7 +82,7 @@ public class CountriesService : ICountriesService
             ExcelWorksheet countriesSheet = excelPackage.Workbook.Worksheets["Countries"];
 
             int totalRow = countriesSheet.Dimension.Rows;
-            for (int row = 2; row < totalRow; row++)
+            for (int row = 2; row <= totalRow; row++)
             {
                 object? cellValue = countriesSheet.Cells[row, 1].Value;
                 if(cellValue != null)
