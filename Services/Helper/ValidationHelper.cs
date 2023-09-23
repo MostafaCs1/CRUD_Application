@@ -1,22 +1,18 @@
-﻿using System;
-using System.Linq;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace Services.Helper;
 
-namespace Services.Helper
+public class ValidationHelper
 {
-    public class ValidationHelper
+    public static void ModelValidation(object obj)
     {
-        public static void ModelValidation(object obj)
-        {
-            ValidationContext validationContext = new ValidationContext(obj);
-            List<ValidationResult> validationResult = new List<ValidationResult>();
+        var validationContext = new ValidationContext(obj);
+        var validationResult = new List<ValidationResult>();
 
-            bool isValid =  Validator.TryValidateObject(obj, validationContext, validationResult);
-            if (!isValid)
-            {
-                throw new ArgumentException(validationResult.FirstOrDefault()?.ErrorMessage);
-            }
+        bool isValid =  Validator.TryValidateObject(obj, validationContext, validationResult, true);
+        if (!isValid)
+        {
+            throw new ArgumentException(validationResult.FirstOrDefault()?.ErrorMessage);
         }
     }
 }

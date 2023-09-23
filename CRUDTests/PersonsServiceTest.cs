@@ -6,6 +6,7 @@ using Xunit.Abstractions;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
+using AutoFixture;
 using Moq;
 
 namespace CRUDTests;
@@ -14,6 +15,8 @@ public class PersonsServiceTest
 {
     //Private fields
     private readonly ITestOutputHelper _outputHelper;
+    private readonly IFixture _fixture;
+
     private readonly IPersonsService _personsService;
     private readonly ICountriesService _countriesService;
 
@@ -21,6 +24,7 @@ public class PersonsServiceTest
     public PersonsServiceTest(ITestOutputHelper outputHelper)
     {
         _outputHelper = outputHelper;
+        _fixture = new Fixture();
 
         //Initial tables
         var personsInitialData = new List<Person>() { };
@@ -39,58 +43,6 @@ public class PersonsServiceTest
         _personsService = new PersonsService(dbContextMock.Object);
         _countriesService = new CountriesService(dbContextMock.Object);
         
-    }
-
-    //Methods
-    public async Task<List<PersonAddRequest>> CreateSomePersons()
-    {
-        //create some country
-        List<CountryAddRequest> requests = new List<CountryAddRequest>{
-            new CountryAddRequest { CountryName = "Iran" },
-            new CountryAddRequest { CountryName = "India"},
-            new CountryAddRequest { CountryName = "USA"}
-        };
-        List<CountryResponse> responses = new List<CountryResponse>();
-        foreach (CountryAddRequest request in requests)
-        {
-            responses.Add(await _countriesService.AddCountry(request));
-        }
-
-        //create somse person
-        List<PersonAddRequest> personAddRequest_list = new List<PersonAddRequest>(){
-        new PersonAddRequest()
-        {
-            PersonName = "Mahdi",
-            Email = "example@email.com",
-            CountryID = responses[0].CountryID,
-            ReceiveNewsLetters = true,
-            Gender = GenderOptions.Female,
-            Address = "address",
-            DateOfBirth = DateTime.Parse("2000-05-06") },
-        new PersonAddRequest()
-        {
-            PersonName = "Farzin",
-            Email = "farzin@email.com",
-            CountryID = responses[1].CountryID,
-            ReceiveNewsLetters = true,
-            Gender = GenderOptions.Male,
-            Address = "address street 52",
-            DateOfBirth = DateTime.Parse("2005-05-06")
-        },
-        new PersonAddRequest()
-        {
-            PersonName = "Rahman",
-            Email = "farzin@email.com",
-            CountryID = responses[2].CountryID,
-            ReceiveNewsLetters = true,
-            Gender = GenderOptions.Male,
-            Address = "address street 52",
-            DateOfBirth = DateTime.Parse("2005-05-06")
-        }
-        };
-
-        return personAddRequest_list;
-
     }
 
     //Test services
@@ -115,7 +67,7 @@ public class PersonsServiceTest
     public async Task AddPerson_NullPersonName()
     {
         //Arrange
-        PersonAddRequest? request = new PersonAddRequest { PersonName = null };
+        PersonAddRequest? request = _fixture.Build<PersonAddRequest>().With(temp => temp.PersonName, null as string).Create();
 
         //Assert
         await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -131,8 +83,7 @@ public class PersonsServiceTest
     public async Task AddPerson_PropPerson()
     {
         //Arrange
-        List<PersonAddRequest> personAddRequest_list = await CreateSomePersons();
-        PersonAddRequest request = personAddRequest_list.First();
+        PersonAddRequest request = _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample@email.com").Create();
 
         //Act
         PersonResponse response_from_add = await _personsService.AddPerson(request);
@@ -163,9 +114,15 @@ public class PersonsServiceTest
     public async Task GetAllPersons_AddSomePerson()
     {
         //Arrange
-        List<PersonAddRequest> persons_add_request = await CreateSomePersons();
-        List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
-        List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
+        var persons_add_request = new List<PersonAddRequest>
+        {
+            _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample_1@email.com").Create(),
+            _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample_2@email.com").Create(),
+            _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample_3@email.com").Create()
+        };
+
+        var persons_response_from_add = new List<PersonResponse>();
+        var persons_response_from_get = new List<PersonResponse>();
 
         //Act
         foreach(PersonAddRequest request in persons_add_request)
@@ -231,8 +188,7 @@ public class PersonsServiceTest
     public async Task GetPersonByPersonID_ValidPersonID()
     {
         //Arrange
-        List<PersonAddRequest> persones_list = await CreateSomePersons();
-        PersonAddRequest person_add_request = persones_list[0];
+        PersonAddRequest person_add_request = _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample@email.com").Create();
 
         //Act
         PersonResponse person_response_from_add = await _personsService.AddPerson(person_add_request);
@@ -251,9 +207,14 @@ public class PersonsServiceTest
     public async Task GetFiltredPerson_EmptySearchStraing()
     {
         //Arrange
-        List<PersonAddRequest> persons_add_request_list = await CreateSomePersons();
-        List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
-        List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
+        var persons_add_request_list = new List<PersonAddRequest>
+        {
+            _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample_1@email.com").Create(),
+            _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample_2@email.com").Create(),
+            _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample_3@email.com").Create()
+        };
+        var persons_response_from_add = new List<PersonResponse>();
+        var persons_response_from_get = new List<PersonResponse>();
 
         //Act
         foreach(PersonAddRequest request in persons_add_request_list)
@@ -286,9 +247,18 @@ public class PersonsServiceTest
     public async Task GetFiltredPerson_SearchByPersonName()
     {
         //Arrange
-        List<PersonAddRequest> persons_add_request_list = await CreateSomePersons();
-        List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
-        List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
+        var persons_add_request_list = new List<PersonAddRequest>
+        {
+            _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "sample_1@email.com").With(temp => temp.PersonName, "Mahdi").Create(),
+            _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "sample_2@email.com").With(temp => temp.PersonName, "Rahman").Create(),
+            _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "sample_3@email.com").With(temp => temp.PersonName, "Ali").Create()
+        };
+
+        var persons_response_from_add = new List<PersonResponse>();
+        var persons_response_from_get = new List<PersonResponse>();
 
         //Act
         foreach (PersonAddRequest request in persons_add_request_list)
@@ -330,10 +300,19 @@ public class PersonsServiceTest
     public async Task GetSortedPersons_DESCOrder()
     {
         //Arrange
-        List<PersonAddRequest> persons_add_request_list = await CreateSomePersons();
-        List<PersonResponse> persons_response_from_add = new List<PersonResponse>();
-        List<PersonResponse> persons_response_from_get = new List<PersonResponse>();
-        List<PersonResponse> persons_response_from_filter = new List<PersonResponse>();
+        var persons_add_request_list = new List<PersonAddRequest>
+        {
+            _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "sample_1@email.com").With(temp => temp.PersonName, "Mahdi").Create(),
+            _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "sample_2@email.com").With(temp => temp.PersonName, "Rahman").Create(),
+            _fixture.Build<PersonAddRequest>()
+            .With(temp => temp.Email, "sample_3@email.com").With(temp => temp.PersonName, "Ali").Create()
+        };
+
+        var persons_response_from_add = new List<PersonResponse>();
+        var persons_response_from_get = new List<PersonResponse>();
+        var persons_response_from_filter = new List<PersonResponse>();
 
         //Act
         foreach(PersonAddRequest person in persons_add_request_list)
@@ -390,13 +369,8 @@ public class PersonsServiceTest
     public async Task UpdatePerson_InvalidPersonID()
     {
         //Arrange
-        PersonUpdateRequest updateRequest = new PersonUpdateRequest()
-        {
-            PersonID = Guid.NewGuid(),
-            PersonName = "Farzin",
-            Email = "Example@email.com",
-            Gender = GenderOptions.Male
-        };
+        PersonUpdateRequest updateRequest = _fixture.Build<PersonUpdateRequest>()
+            .With(temp => temp.Email, "sample@email.com").Create();
 
         //Assert
         await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -408,14 +382,13 @@ public class PersonsServiceTest
 
     //When PersonName is null, it should throw ArgumentException
     [Fact]
-    public async Task UpdatePerson_NullPersonName()
+    public async Task UpdatePerson_PersonNameIsNull()
     {
         //Arrange
-        List<PersonAddRequest> person_requests_list = await CreateSomePersons();
-        PersonAddRequest request = person_requests_list.First();
+        PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample@email.com").Create();
 
         //Act
-        PersonResponse response_from_add = await _personsService.AddPerson(request);
+        PersonResponse response_from_add = await _personsService.AddPerson(personAddRequest);
         PersonUpdateRequest personUpdateRequest = response_from_add.ToPersonUpdateRequest();
         personUpdateRequest.PersonName = null;
 
@@ -431,8 +404,7 @@ public class PersonsServiceTest
     public async void UpdatePerson_ValidUpdateRequest()
     {
         //Arrange
-        List<PersonAddRequest> person_requests_list = await CreateSomePersons();
-        PersonAddRequest request = person_requests_list.First();
+        PersonAddRequest request = _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample_2@email.com").Create();
 
         //Act
         PersonResponse response_from_add = await _personsService.AddPerson(request);
@@ -486,8 +458,7 @@ public class PersonsServiceTest
     public async Task DeletePerson_ValidPersonID()
     {
         //Arrange
-        List<PersonAddRequest> persons = await CreateSomePersons();
-        PersonAddRequest personAddRequest = persons.First();
+        PersonAddRequest personAddRequest = _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample@email.com").Create();
 
         //Act
         PersonResponse personResponse = await _personsService.AddPerson(personAddRequest);

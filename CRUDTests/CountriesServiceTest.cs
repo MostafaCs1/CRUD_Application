@@ -4,15 +4,19 @@ using ServiceContracts;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
+using AutoFixture;
 
 namespace CRUDTests;
 
 public class CountriesServiceTest
 {
     private readonly ICountriesService _countriesService;
+    private readonly IFixture _fixture;
 
     public CountriesServiceTest()
     {
+        _fixture = new Fixture();
+
         //Intial country table
         var countriesInitialData = new List<Country>(){ };
 
@@ -49,7 +53,8 @@ public class CountriesServiceTest
     public async Task AddCountry_NullCountryName()
     {
         //Arrange
-        CountryAddRequest? countryAddRequest = new CountryAddRequest { CountryName = null };
+        CountryAddRequest? countryAddRequest = _fixture.Build<CountryAddRequest>()
+            .With(temp => temp.CountryName, null as string).Create();
 
         //Assert
         await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -64,8 +69,8 @@ public class CountriesServiceTest
     public async Task AddCountry_DuplicateCountryName()
     {
         //Arrange
-        CountryAddRequest? request_1 = new CountryAddRequest { CountryName = "Iran" };
-        CountryAddRequest? request_2 = new CountryAddRequest { CountryName = "Iran" };            
+        CountryAddRequest? request_1 = _fixture.Create<CountryAddRequest>();
+        CountryAddRequest? request_2 = _fixture.Build<CountryAddRequest>().With(temp => temp.CountryName, request_1.CountryName).Create();
 
         //Assert
         await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -82,7 +87,7 @@ public class CountriesServiceTest
     public async Task AddCountry_PropCountryRequest()
     {
         //Arrange 
-        CountryAddRequest? request = new CountryAddRequest { CountryName = "Iran" };
+        CountryAddRequest? request = _fixture.Create<CountryAddRequest>();
 
         //Act
         CountryResponse countryResponse = await _countriesService.AddCountry(request);
@@ -112,14 +117,9 @@ public class CountriesServiceTest
     public async Task GetAllCountries_AddSomeCountry()
     {
         //Arrange
-        List<CountryAddRequest> country_add_request_list = new List<CountryAddRequest>
-        {
-            new CountryAddRequest { CountryName = "Iran" },
-            new CountryAddRequest { CountryName = "USA" },
-            new CountryAddRequest { CountryName = "India" }
-        };
+        List<CountryAddRequest> country_add_request_list = _fixture.Create<List<CountryAddRequest>>();
 
-        List<CountryResponse> expected_country_response = new List<CountryResponse>();
+        var expected_country_response = new List<CountryResponse>();
 
         //Act
         foreach(CountryAddRequest request in country_add_request_list)
@@ -172,7 +172,7 @@ public class CountriesServiceTest
     public async Task GetCountryByCountryID_ValidCountryID()
     {
         //Arrange
-        CountryAddRequest request = new CountryAddRequest { CountryName = "Iran" };
+        CountryAddRequest request = _fixture.Create<CountryAddRequest>();
 
         //Act
         CountryResponse response_from_add = await _countriesService.AddCountry(request);
