@@ -5,14 +5,17 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
 using AutoFixture;
+using FluentAssertions;
 
 namespace CRUDTests;
 
 public class CountriesServiceTest
 {
+    //private fields
     private readonly ICountriesService _countriesService;
     private readonly IFixture _fixture;
 
+    //constructor
     public CountriesServiceTest()
     {
         _fixture = new Fixture();
@@ -40,12 +43,11 @@ public class CountriesServiceTest
         //Arrange
         CountryAddRequest? countryAddRequest = null;
 
+        //Act
+        Func<Task> action = async() => await _countriesService.AddCountry(countryAddRequest);
+
         //Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(async () => 
-        {
-            //Act
-            await _countriesService.AddCountry(countryAddRequest);
-        });
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     //If you supply null country name it should return argument exception
@@ -56,12 +58,11 @@ public class CountriesServiceTest
         CountryAddRequest? countryAddRequest = _fixture.Build<CountryAddRequest>()
             .With(temp => temp.CountryName, null as string).Create();
 
+        //Act
+        Func<Task> action = async () => await _countriesService.AddCountry(countryAddRequest);
+
         //Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
-        {
-            //Act
-            await _countriesService.AddCountry(countryAddRequest);
-        });
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     //When we supply a duplicate country name it should return argument exception
@@ -72,14 +73,15 @@ public class CountriesServiceTest
         CountryAddRequest? request_1 = _fixture.Create<CountryAddRequest>();
         CountryAddRequest? request_2 = _fixture.Build<CountryAddRequest>().With(temp => temp.CountryName, request_1.CountryName).Create();
 
-        //Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
+        //Act
+        Func<Task> action = async () =>
         {
-            //Act
             await _countriesService.AddCountry(request_1);
             await _countriesService.AddCountry(request_2);
-        });
+        };
 
+        //Assert
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     //If we supply correct country name it should return a correct country respone object
@@ -94,11 +96,12 @@ public class CountriesServiceTest
         List<CountryResponse> countries = await _countriesService.GetAllCountries();
 
         //Assert
-        Assert.True(countryResponse.CountryID != Guid.Empty);
-        Assert.Contains(countryResponse, countries);
+        countryResponse.CountryID.Should().NotBe(Guid.Empty);
+        countries.Should().Contain(countryResponse);
     }
 
     #endregion
+
 
     #region GetAllCountries
     //County list should be empty before we add county
@@ -109,7 +112,7 @@ public class CountriesServiceTest
         List<CountryResponse> actual_country_list = await _countriesService.GetAllCountries();
 
         //Assert
-        Assert.Empty(actual_country_list);
+        actual_country_list.Should().BeEmpty();
     }
 
     //When we add some coutry to county list it should return their in the list
@@ -131,12 +134,10 @@ public class CountriesServiceTest
         List<CountryResponse> actual_country_response = await _countriesService.GetAllCountries();
 
         //Assert
-        foreach(CountryResponse countryResponse in expected_country_response)
-        {
-            Assert.Contains(countryResponse, actual_country_response);
-        }
+        actual_country_response.Should().BeEquivalentTo(expected_country_response);
     }
     #endregion
+
 
     #region GetCountryByCountryID
     //If you supply null country id it should return null
@@ -150,7 +151,7 @@ public class CountriesServiceTest
         CountryResponse? response = await _countriesService.GetCountryByCountryID(countryID);
 
         //Assert
-        Assert.Null(response);
+        response.Should().BeNull();
     }
 
     //If you supply invalid country id it should return null value
@@ -164,7 +165,7 @@ public class CountriesServiceTest
         CountryResponse? response = await _countriesService.GetCountryByCountryID(countryID);
 
         //Assert
-        Assert.Null(response);
+        response?.Should().BeNull();
     }
 
     //If you supply true country id it should return proper country response
@@ -179,7 +180,7 @@ public class CountriesServiceTest
         CountryResponse? response_from_get = await _countriesService.GetCountryByCountryID(response_from_add.CountryID);
 
         //Assert
-        Assert.Equal(response_from_add, response_from_get);
+        response_from_get.Should().Be(response_from_add);
     }
 
     #endregion

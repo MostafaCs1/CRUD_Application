@@ -7,7 +7,7 @@ using Entities;
 using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
 using AutoFixture;
-using Moq;
+using FluentAssertions;
 
 namespace CRUDTests;
 
@@ -18,7 +18,6 @@ public class PersonsServiceTest
     private readonly IFixture _fixture;
 
     private readonly IPersonsService _personsService;
-    private readonly ICountriesService _countriesService;
 
     //Constructor
     public PersonsServiceTest(ITestOutputHelper outputHelper)
@@ -28,7 +27,6 @@ public class PersonsServiceTest
 
         //Initial tables
         var personsInitialData = new List<Person>() { };
-        var countriesInitialdata = new List<Country>() { };
 
         //Get instance of dbContext builder option
         DbContextOptions builderOption = new DbContextOptionsBuilder<ApplicationDbContext>().Options;
@@ -37,12 +35,9 @@ public class PersonsServiceTest
         var dbContextMock = new DbContextMock<ApplicationDbContext>(builderOption);
 
         //add mock tables into mock dbContext
-        dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialdata);
         dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInitialData);
 
         _personsService = new PersonsService(dbContextMock.Object);
-        _countriesService = new CountriesService(dbContextMock.Object);
-        
     }
 
     //Test services
@@ -54,12 +49,11 @@ public class PersonsServiceTest
         //Arrange
         PersonAddRequest? request = null;
 
+        //Act
+        Func<Task> action = async () => await _personsService.AddPerson(request);
+
         //Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-        {
-            //Act
-            await _personsService.AddPerson(request);
-        });
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     //If you supply null Person name then it should return argument exception
@@ -69,12 +63,12 @@ public class PersonsServiceTest
         //Arrange
         PersonAddRequest? request = _fixture.Build<PersonAddRequest>().With(temp => temp.PersonName, null as string).Create();
 
+        //Act
+        Func<Task> action = async () => await _personsService.AddPerson(request);
+        Task newVal = action.Invoke();
+
         //Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
-        {
-            //Act
-            await _personsService.AddPerson(request);
-        });
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
 
@@ -90,8 +84,57 @@ public class PersonsServiceTest
         List<PersonResponse> get_persons_list = await _personsService.GetAllPersons();
 
         //Assert
-        Assert.True(response_from_add.PersonID != Guid.Empty);
-        Assert.Contains(response_from_add, get_persons_list);
+        response_from_add.PersonID.Should().NotBe(Guid.Empty);
+        get_persons_list.Should().Contain(response_from_add);
+    }
+
+    #endregion 
+
+
+    #region GetPersonByPersonID
+
+    // If you supply null person Id it should return null
+    [Fact]
+    public async Task GetPersonByPersonID_NullPersonID()
+    {
+        //Arrange
+        Guid? personID = null;
+
+        //Act
+        PersonResponse? response = await _personsService.GetPersonByPersonID(personID);
+
+        //Assert
+        response.Should().BeNull();
+    }
+
+    //If you supply invalid person id then it should return null
+    [Fact]
+    public async Task GetPersonByPersonID_InvalidPersonID()
+    {
+        //Arrange
+        Guid personID = Guid.NewGuid();
+
+        //Act
+        PersonResponse? response = await _personsService.GetPersonByPersonID(personID);
+
+        //Assert
+        response.Should().BeNull();
+    }
+
+
+    //If you supply valid person Id then it should return correct person response
+    [Fact]
+    public async Task GetPersonByPersonID_ValidPersonID()
+    {
+        //Arrange
+        PersonAddRequest person_add_request = _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample@email.com").Create();
+
+        //Act
+        PersonResponse person_response_from_add = await _personsService.AddPerson(person_add_request);
+        PersonResponse? person_response_from_get = await _personsService.GetPersonByPersonID(person_response_from_add.PersonID);
+
+        //Assert
+        person_response_from_get.Should().Be(person_response_from_add);
     }
 
     #endregion
@@ -106,7 +149,7 @@ public class PersonsServiceTest
         List<PersonResponse> persons = await _personsService.GetAllPersons();
 
         //Assert
-        Assert.Empty(persons);
+        persons.Should().BeEmpty();
     }
 
     //when we supply some person into list of persons it should return them
@@ -125,14 +168,14 @@ public class PersonsServiceTest
         var persons_response_from_get = new List<PersonResponse>();
 
         //Act
-        foreach(PersonAddRequest request in persons_add_request)
+        foreach (PersonAddRequest request in persons_add_request)
         {
             PersonResponse response = await _personsService.AddPerson(request);
             persons_response_from_add.Add(response);
         }
 
         _outputHelper.WriteLine("Expected persons :");
-        foreach(PersonResponse personResponse in persons_response_from_add)
+        foreach (PersonResponse personResponse in persons_response_from_add)
         {
             _outputHelper.WriteLine(personResponse.ToString());
         }
@@ -145,59 +188,8 @@ public class PersonsServiceTest
         }
 
         //Assert
-        foreach (PersonResponse response in persons_response_from_add)
-        {
-            Assert.Contains(response, persons_response_from_get);
-        }
+        persons_response_from_get.Should().BeEquivalentTo(persons_response_from_add);
     }
-    #endregion
-
-
-    #region GetPersonByPersonID
-    // If you supply null person Id it should return null
-    [Fact]
-    public async Task GetPersonByPersonID_NullPersonID()
-    {
-        //Arrange
-        Guid? personID = null;
-
-        //Act
-        PersonResponse? response = await _personsService.GetPersonByPersonID(personID);
-
-        //Assert
-        Assert.Null(response);
-    }
-
-    //If you supply invalid person id then it should return null
-    [Fact]
-    public async Task GetPersonByPersonID_InvalidPersonID()
-    {
-        //Arrange
-        Guid personID = Guid.NewGuid();
-
-        //Act
-        PersonResponse? response = await _personsService.GetPersonByPersonID(personID);
-
-        //Assert
-        Assert.Null(response );
-    }
-
-
-    //If you supply valid person Id then it should return correct person response
-    [Fact]
-    public async Task GetPersonByPersonID_ValidPersonID()
-    {
-        //Arrange
-        PersonAddRequest person_add_request = _fixture.Build<PersonAddRequest>().With(temp => temp.Email, "sample@email.com").Create();
-
-        //Act
-        PersonResponse person_response_from_add = await _personsService.AddPerson(person_add_request);
-        PersonResponse? person_response_from_get = await _personsService.GetPersonByPersonID(person_response_from_add.PersonID);
-
-        //Assert
-        Assert.Equal(person_response_from_add, person_response_from_get);
-    }
-
     #endregion
 
 
@@ -217,13 +209,13 @@ public class PersonsServiceTest
         var persons_response_from_get = new List<PersonResponse>();
 
         //Act
-        foreach(PersonAddRequest request in persons_add_request_list)
+        foreach (PersonAddRequest request in persons_add_request_list)
         {
             persons_response_from_add.Add(await _personsService.AddPerson(request));
         }
 
         _outputHelper.WriteLine("Expected responses :");
-        foreach(PersonResponse response in  persons_response_from_add)
+        foreach (PersonResponse response in persons_response_from_add)
         {
             _outputHelper.WriteLine(response.ToString());
         }
@@ -236,10 +228,7 @@ public class PersonsServiceTest
         }
 
         //Assert
-        foreach(PersonResponse personResponse in persons_response_from_add)
-        {
-            Assert.Contains(personResponse, persons_response_from_get);
-        }
+        persons_response_from_get.Should().BeEquivalentTo(persons_response_from_add);
     }
 
     //First we will add few persons; and then we will search based on person name with some search string. It should return the matching persons
@@ -280,16 +269,9 @@ public class PersonsServiceTest
         }
 
         //Assert
-        foreach (PersonResponse personResponse in persons_response_from_add)
-        {
-            if(personResponse.PersonName != null)
-            {
-                if(personResponse.PersonName.Contains("ma", StringComparison.OrdinalIgnoreCase))
-                {
-                    Assert.Contains(personResponse, persons_response_from_get);
-                }
-            }
-        }
+        persons_response_from_get.Should().OnlyContain(
+            person => !string.IsNullOrEmpty(person.PersonName) && person.PersonName.Contains("ma", StringComparison.OrdinalIgnoreCase)
+            );
     }
     #endregion
 
@@ -315,20 +297,12 @@ public class PersonsServiceTest
         var persons_response_from_filter = new List<PersonResponse>();
 
         //Act
-        foreach(PersonAddRequest person in persons_add_request_list)
+        foreach (PersonAddRequest person in persons_add_request_list)
         {
             persons_response_from_add.Add(await _personsService.AddPerson(person));
         }
 
         List<PersonResponse> allPersons = await _personsService.GetAllPersons();
-        persons_response_from_filter = allPersons.OrderByDescending(temp => temp.PersonName).ToList();
-
-        // print expected values
-        _outputHelper.WriteLine("expected values: ");
-        foreach(PersonResponse response in persons_response_from_filter)
-        {
-            _outputHelper.WriteLine(response.ToString());
-        }
 
         persons_response_from_get = _personsService.GetSortedPersons(allPersons, nameof(PersonResponse.PersonName), SortOrderOptions.DESC);
         // print actual values
@@ -339,10 +313,7 @@ public class PersonsServiceTest
         }
 
         //Assert
-        for(int i = 0; i < allPersons.Count; i++)
-        {
-            Assert.Equal(persons_response_from_filter[i], persons_response_from_get[i]);
-        }
+        persons_response_from_get.Should().BeInDescendingOrder(temp => temp.PersonName);
     }
 
     #endregion
@@ -356,12 +327,11 @@ public class PersonsServiceTest
         //Arrange
         PersonUpdateRequest? updateRequest = null;
 
+        //Act
+        Func<Task> action = async() => await _personsService.UpdatePerson(updateRequest);
+
         //Asert
-        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-        {
-            //Act
-            await _personsService.UpdatePerson(updateRequest);
-        });
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     //When we supply invalid person id, it should throw ArgumentException
@@ -372,12 +342,11 @@ public class PersonsServiceTest
         PersonUpdateRequest updateRequest = _fixture.Build<PersonUpdateRequest>()
             .With(temp => temp.Email, "sample@email.com").Create();
 
+        //Act
+        Func<Task> action = async() => await _personsService.UpdatePerson(updateRequest);
+
         //Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
-        {
-            //Act
-            await _personsService.UpdatePerson(updateRequest);
-        });
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     //When PersonName is null, it should throw ArgumentException
@@ -392,11 +361,10 @@ public class PersonsServiceTest
         PersonUpdateRequest personUpdateRequest = response_from_add.ToPersonUpdateRequest();
         personUpdateRequest.PersonName = null;
 
+        Func<Task> action = async() => await _personsService.UpdatePerson(personUpdateRequest);
+
         //Assert
-        await Assert.ThrowsAsync<ArgumentException>(async () =>
-        {
-            await _personsService.UpdatePerson(personUpdateRequest);
-        });
+        await action.Should().ThrowAsync<ArgumentException>();
     }
 
     //First, add a new person and try to update the person name and email
@@ -416,7 +384,7 @@ public class PersonsServiceTest
         PersonResponse? person_reponse_from_get = await _personsService.GetPersonByPersonID(person_reponse_from_update.PersonID);
 
         //Assert
-        Assert.Equal(person_reponse_from_update, person_reponse_from_get);
+        person_reponse_from_get.Should().Be(person_reponse_from_update);
     }
 
     #endregion
@@ -430,12 +398,11 @@ public class PersonsServiceTest
         //Act
         Guid? personID = null;
 
+        //Act
+        Func<Task> action = async() => await _personsService.DeletePerson(personID);
+
         //Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-        {
-            //Act
-            await _personsService.DeletePerson(personID);
-        });
+        await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
     //If you supply an invalid PersonID, it should return false
@@ -449,7 +416,7 @@ public class PersonsServiceTest
         bool isDeleted = await _personsService.DeletePerson(personID);
 
         //Assert
-        Assert.False(isDeleted);
+        isDeleted.Should().BeFalse();
     }
 
 
@@ -465,7 +432,7 @@ public class PersonsServiceTest
         bool isDeleted = await _personsService.DeletePerson(personResponse.PersonID);
 
         //Assert
-        Assert.True(isDeleted);
+        isDeleted.Should().BeTrue();
     }
 
     #endregion
