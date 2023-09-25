@@ -33,14 +33,14 @@ public interface IPersonsRepository
     /// </summary>
     /// <param name="func">LINQ expression to check</param>
     /// <returns>All matching persons with given condition</returns>
-    Task<List<Person>> GetFiltredPersons(Expression<Predicate<Person>> func);
+    Task<List<Person>> GetFiltredPersons(Expression<Func<Person, bool>> func);
 
     /// <summary>
     /// Deletes a person object based on the person id
     /// </summary>
     /// <param name="personID">Person ID (guid) to search</param>
     /// <returns>Returns true, if the deletion is successful; otherwise false</returns>
-    Task<Person> DeletePersonByPersonID(Guid personID);
+    Task<bool> DeletePersonByPersonID(Guid personID);
 
     /// <summary>
     /// Updates a person object (person name and other details) based on the given person id
