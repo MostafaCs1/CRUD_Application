@@ -32,7 +32,7 @@ public class CountriesServiceTest
         //add mock country table into mock dbcontext
         dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
 
-        _countriesService = new CountriesService(dbContextMock.Object);
+        _countriesService = new CountriesService(null);
     }
 
     #region AddCountry

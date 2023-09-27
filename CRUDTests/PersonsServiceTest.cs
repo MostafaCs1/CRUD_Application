@@ -37,7 +37,7 @@ public class PersonsServiceTest
         //add mock tables into mock dbContext
         dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInitialData);
 
-        _personsService = new PersonsService(dbContextMock.Object);
+        _personsService = new PersonsService(null);
     }
 
     //Test services
