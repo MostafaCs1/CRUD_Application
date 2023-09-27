@@ -69,15 +69,13 @@ public class PersonsService : IPersonsService
 
     public async Task<List<PersonResponse>> GetFiltredPersons(string searchBy, string? searchString)
     {
-        List<Person> allPersons = await _personsrepository.GetAllPersons();
-        List<Person> matchingPersons = allPersons;
-
         if (string.IsNullOrEmpty(searchString) || string.IsNullOrEmpty(searchBy))
         {
-            return matchingPersons.Select(person => person.ToPersonResponse()).ToList();
+            List<Person> persons = await _personsrepository.GetAllPersons();
+            return persons.Select(person => person.ToPersonResponse()).ToList();
         }
 
-        matchingPersons = (searchBy) switch
+        List<Person> matchingPersons = (searchBy) switch
         {
             (nameof(PersonResponse.PersonName)) => await _personsrepository
             .GetFiltredPersons(person => person.PersonName.Contains(searchString)),
@@ -97,7 +95,7 @@ public class PersonsService : IPersonsService
             (nameof(PersonResponse.Address)) => await _personsrepository
             .GetFiltredPersons(person => person.Address.Contains(searchString)),
 
-            _ => allPersons
+            _ => await _personsrepository.GetAllPersons()
         };
 
         return matchingPersons.Select(person => person.ToPersonResponse()).ToList();
