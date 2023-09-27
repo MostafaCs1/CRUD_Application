@@ -3,6 +3,8 @@ using Services;
 using Entities;
 using Microsoft.EntityFrameworkCore;
 using Rotativa.AspNetCore;
+using RepositoryContracts;
+using Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IPersonsService, PersonsService>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
+builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
 
 //add database service
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

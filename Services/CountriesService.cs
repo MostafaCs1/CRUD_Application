@@ -1,21 +1,21 @@
 ﻿using ServiceContracts;
 using ServiceContracts.DTO;
-using Microsoft.EntityFrameworkCore;
 using Entities;
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
+using RepositoryContracts;
 
 namespace Services;
 
 public class CountriesService : ICountriesService
 {
     //private fileds
-    private readonly ApplicationDbContext _db;
+    private readonly ICountriesRepository _countriesRepository;
 
     //constractor
-    public CountriesService(ApplicationDbContext personDbContext)
+    public CountriesService(ICountriesRepository countriesRepository)
     {
-        _db = personDbContext;
+        _countriesRepository = countriesRepository;
     }
 
     //Services
@@ -34,7 +34,7 @@ public class CountriesService : ICountriesService
         }
 
         //validation : country name can't be duplicate
-        if (await _db.Countries.AnyAsync(country => country.CountryName == countryAddRequest.CountryName))
+        if (await _countriesRepository.GetCountryByCountryName(countryAddRequest.CountryName) != null)
         {
             throw new ArgumentException("Given country name is already exist.");
         }
@@ -46,8 +46,7 @@ public class CountriesService : ICountriesService
         newCountry.CountryID = Guid.NewGuid();
 
         //add country to country list
-        _db.Countries.Add(newCountry);
-        await _db.SaveChangesAsync();
+        await _countriesRepository.AddCountry(newCountry);
 
         return newCountry.ToCountryResponse();
     }
@@ -55,7 +54,8 @@ public class CountriesService : ICountriesService
     public async Task<List<CountryResponse>> GetAllCountries()
     {
         //return all country that exist in countries list as list of response type
-        return await _db.Countries.Select(country => country.ToCountryResponse()).ToListAsync();
+        List<Country> countries = await _countriesRepository.GetAllCountry();
+        return countries.Select(country => country.ToCountryResponse()).ToList();
     }
 
     public async Task<CountryResponse?> GetCountryByCountryID(Guid? countryID)
@@ -63,7 +63,7 @@ public class CountriesService : ICountriesService
         if (countryID == null)
             return null;
 
-        Country? country = await _db.Countries.FirstOrDefaultAsync(temp => temp.CountryID == countryID);
+        Country? country = await _countriesRepository.GetCountryByCountryID(countryID.Value);
 
         if (country == null)
             return null;
@@ -88,12 +88,10 @@ public class CountriesService : ICountriesService
                 if(cellValue != null)
                 {
                     string? countryName = cellValue.ToString();
-                    if(!_db.Countries.Where(temp => temp.CountryName == countryName).Any())
+                    if(countryName != null && await _countriesRepository.GetCountryByCountryName(countryName) == null)
                     {
                         var country = new Country() { CountryID = Guid.NewGuid(), CountryName = countryName};
-                        _db.Countries.Add(country);
-                        await _db.SaveChangesAsync();
-
+                        await _countriesRepository.AddCountry(country);
                         countInsertedCountry++;
                     }
                 }
