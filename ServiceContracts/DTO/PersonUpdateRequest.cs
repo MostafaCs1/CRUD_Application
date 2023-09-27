@@ -1,6 +1,5 @@
 ﻿using Entities;
 using ServiceContracts.Enums;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 
@@ -34,6 +33,7 @@ namespace ServiceContracts.DTO
         {
             return new Person
             {
+                PersonID = this.PersonID,
                 PersonName = this.PersonName,
                 Email = this.Email,
                 DateOfBirth = this.DateOfBirth,
