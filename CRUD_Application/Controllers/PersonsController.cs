@@ -1,5 +1,4 @@
-﻿using Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -14,12 +13,14 @@ namespace CRUD_Application.Controllers
         //private fields
         private readonly IPersonsService _personService;
         private readonly ICountriesService _countryService;
+        private readonly ILogger<PersonsController> _logger;
 
         //constructor
-        public PersonsController(IPersonsService personsService, ICountriesService countriesService)
+        public PersonsController(IPersonsService personsService, ICountriesService countriesService, ILogger<PersonsController> logger)
         {
             _personService = personsService;
             _countryService = countriesService;
+            _logger = logger;
         }
 
         //actions
@@ -29,6 +30,9 @@ namespace CRUD_Application.Controllers
         [Route("[action]")]
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy, SortOrderOptions sortOrder)
         {
+            _logger.LogInformation("Index action method in PersonsController");
+            _logger.LogDebug($"searchBy :{searchBy}, searchString :{searchString}, sortBy :{sortBy}, sortOrder:{sortOrder}");
+
             ViewData["searchList"] = new Dictionary<string, string>()
             {
                 {"Person Name", nameof(PersonResponse.PersonName) },
