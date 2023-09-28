@@ -85,12 +85,12 @@ public class CountriesService : ICountriesService
             for (int row = 2; row <= totalRow; row++)
             {
                 object? cellValue = countriesSheet.Cells[row, 1].Value;
-                if(cellValue != null)
+                if (cellValue != null)
                 {
                     string? countryName = cellValue.ToString();
-                    if(countryName != null && await _countriesRepository.GetCountryByCountryName(countryName) == null)
+                    if (countryName != null && await _countriesRepository.GetCountryByCountryName(countryName) == null)
                     {
-                        var country = new Country() { CountryID = Guid.NewGuid(), CountryName = countryName};
+                        var country = new Country() { CountryID = Guid.NewGuid(), CountryName = countryName };
                         await _countriesRepository.AddCountry(country);
                         countInsertedCountry++;
                     }
